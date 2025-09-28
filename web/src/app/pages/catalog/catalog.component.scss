@@ -1,7 +1,24 @@
-.catalog {
-    padding: 2rem 1rem;
-  }
-  .catalog h2 {
-    color: #b71c1c;
-    margin-bottom: 1rem;
-  }
+.catalog { padding: 1rem; }
+h2 { color: #b71c1c; margin-bottom: 1rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 1rem;
+}
+
+.card {
+  display: block;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+
+.card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
+.card h3 { margin: .5rem 0 .25rem; font-size: 1.05rem; }
+.card .price { font-weight: 700; color: #c8a600; margin: 0; }
+.card .desc { color: #555; margin: .25rem 0 0; font-size: .9rem; }

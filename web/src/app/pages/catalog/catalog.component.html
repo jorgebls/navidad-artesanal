@@ -1,4 +1,20 @@
 <section class="catalog">
     <h2>Catálogo</h2>
-    <p>Aquí verás todos los productos navideños 🎁 (pronto).</p>
+  
+    <div class="grid" *ngIf="products.length; else empty">
+      <a class="card" *ngFor="let p of products" [routerLink]="['/producto', p.id]">
+        <img
+          [src]="p.image"
+          [alt]="p.name"
+          loading="lazy"
+          (error)="onImgError($event)"  />
+        <h3>{{ p.name }}</h3>
+        <p class="price">$ {{ p.price | number:'1.0-0' }}</p>
+        <p class="desc">{{ p.description }}</p>
+      </a>
+    </div>
+  
+    <ng-template #empty>
+      <p>No hay productos cargados.</p>
+    </ng-template>
   </section>
