@@ -1,0 +1,28 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Árbol de Navidad -->
+  <g id="tree">
+    <!-- Tronco -->
+    <rect x="95" y="45" width="10" height="15" fill="#8B4513"/>
+    
+    <!-- Capas del árbol -->
+    <path d="M100 10 L85 35 L115 35 Z" fill="#228B22"/>
+    <path d="M100 20 L80 40 L120 40 Z" fill="#32CD32"/>
+    <path d="M100 30 L75 45 L125 45 Z" fill="#228B22"/>
+    
+    <!-- Estrella en la punta -->
+    <path d="M100 5 L102 10 L107 10 L103 13 L105 18 L100 15 L95 18 L97 13 L93 10 L98 10 Z" fill="#FFD700"/>
+    
+    <!-- Decoraciones -->
+    <circle cx="90" cy="25" r="2" fill="#FF0000"/>
+    <circle cx="110" cy="30" r="2" fill="#FFD700"/>
+    <circle cx="85" cy="40" r="2" fill="#0000FF"/>
+    <circle cx="115" cy="42" r="2" fill="#FF0000"/>
+  </g>
+  
+  <!-- Texto -->
+  <text x="120" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#B71C1C">Navidad</text>
+  <text x="120" y="45" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#B71C1C">Artesanal</text>
+  
+  <!-- Línea decorativa -->
+  <line x1="120" y1="50" x2="190" y2="50" stroke="#C8A600" stroke-width="2"/>
+</svg>

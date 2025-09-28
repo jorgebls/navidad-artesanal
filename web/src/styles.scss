@@ -1,4 +1,107 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body { 
+  height: 100%; 
+  overflow-x: hidden;
+}
+
+body { 
+  margin: 0; 
+  font-family: 'Georgia', serif;
+  line-height: 1.6;
+  color: #2c3e50;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Animaciones Navideñas */
+@keyframes snowfall {
+  0% { 
+    transform: translateY(-100vh) rotate(0deg); 
+  }
+  100% { 
+    transform: translateY(100vh) rotate(360deg); 
+  }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; 
+  }
+  50% { 
+    text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700, 0 0 40px #ffd700; 
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.1); 
+  }
+}
+
+/* Efecto de nieve */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: #fff;
+  font-size: 1em;
+  animation: snowfall linear infinite;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Estilos para el contenedor principal */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Efectos de hover navideños */
+.nav-link, .btn {
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover, .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Efectos de brillo para elementos navideños */
+.glow-effect {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.float-effect {
+  animation: float 3s ease-in-out infinite;
+}
+
+.twinkle-effect {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}

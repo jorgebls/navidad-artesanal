@@ -1,22 +1,210 @@
+<!-- Hero Section -->
 <section class="hero">
+  <div class="hero-container">
     <div class="hero-content">
-      <h1>Navidad Artesanal 🎄</h1>
-      <p>Decoraciones hechas a mano: bolitas, moños, cajas y más.</p>
-      <a class="btn" routerLink="/catalogo">Ver catálogo</a>
+      <div class="hero-text">
+        <h1 class="hero-title">Magia Navideña<br />Hecha a Mano</h1>
+        <p class="hero-description">
+          Descubre adornos únicos y regalos especiales que llenarán tu hogar 
+          del espíritu navideño. Cada pieza es creada con amor y dedicación.
+        </p>
+        <div class="hero-buttons">
+          <a routerLink="/catalogo" class="btn btn-primary">Ver Colección</a>
+          <a href="#about" class="btn btn-outline">Saber Más</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="image-placeholder">
+          <div class="placeholder-content">
+            <span class="placeholder-icon">🎄</span>
+            <p>Salón navideño acogedor</p>
+          </div>
+        </div>
+        <div class="hero-badge">
+          <div class="badge-content">
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
-  
-  <section class="highlights">
-    <div class="card">
-      <h3>Bolitas</h3>
-      <p>Clásicas y personalizadas.</p>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Nuestras Categorías</h2>
+      <p class="section-description">
+        Explora nuestra colección de productos artesanales para hacer de esta Navidad una experiencia única
+      </p>
     </div>
-    <div class="card">
-      <h3>Moños</h3>
-      <p>Toque dorado para tus regalos.</p>
+
+    <div class="categories-grid">
+      <div class="category-card">
+        <div class="category-icon">🎅</div>
+        <h3 class="category-title">Adornos de Árbol</h3>
+        <p class="category-description">Esferas, estrellas y figuras únicas para tu árbol</p>
+        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">🕯️</div>
+        <h3 class="category-title">Decoración Hogar</h3>
+        <p class="category-description">Guirnaldas, centros de mesa y más para tu hogar</p>
+        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">🎁</div>
+        <h3 class="category-title">Regalos Especiales</h3>
+        <p class="category-description">Regalos únicos y personalizados para seres queridos</p>
+        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">⭐</div>
+        <h3 class="category-title">Accesorios</h3>
+        <p class="category-description">Tarjetas, envolturas y detalles navideños</p>
+        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+      </div>
     </div>
-    <div class="card">
-      <h3>Cajas</h3>
-      <p>Presentaciones bonitas y resistentes.</p>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Productos Destacados</h2>
+      <p class="section-description">
+        Algunas de nuestras creaciones más populares hechas por artesanos locales
+      </p>
     </div>
-  </section>
+
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-image">
+          <div class="image-placeholder">
+            <span class="product-emoji">🎄</span>
+          </div>
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">Esfera Artesanal Roja</h3>
+          <p class="product-description">Hecha a mano con técnica tradicional</p>
+          <div class="product-price">€24.99</div>
+        </div>
+        <div class="product-actions">
+          <button class="btn btn-primary btn-full">Añadir al Carrito</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">
+          <div class="image-placeholder">
+            <span class="product-emoji">🎀</span>
+          </div>
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">Caja Clásica</h3>
+          <p class="product-description">Decoración tradicional con aroma natural</p>
+          <div class="product-price">€39.99</div>
+        </div>
+        <div class="product-actions">
+          <button class="btn btn-primary btn-full">Añadir al Carrito</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">
+          <div class="image-placeholder">
+            <span class="product-emoji">⭐</span>
+          </div>
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">Caja Premium Roja</h3>
+          <p class="product-description">6 piezas únicas pintadas a mano</p>
+          <div class="product-price">€45.99</div>
+        </div>
+        <div class="product-actions">
+          <button class="btn btn-primary btn-full">Añadir al Carrito</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-footer">
+      <a routerLink="/catalogo" class="btn btn-outline">Ver Todos los Productos</a>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-content">
+      <div class="about-image">
+        <div class="image-placeholder">
+          <div class="placeholder-content">
+            <span class="placeholder-icon">🔨</span>
+            <p>Taller artesanal</p>
+          </div>
+        </div>
+      </div>
+      <div class="about-text">
+        <h2 class="about-title">Nuestra Historia Artesanal</h2>
+        <p class="about-description">
+          Dos años creando alegría desde Instagram, ahora con tienda online. Piezas únicas,
+          hechas una a una en nuestro taller familiar.
+          Trabajamos por lotes pequeños para asegurar calidad. Si un producto no está disponible,
+          puedes reservarlo y lo fabricamos para ti.
+        </p>
+        <p class="about-description">
+          Trabajamos con artesanos locales que comparten nuestro compromiso con 
+          la excelencia y la sostenibilidad, asegurando que cada pieza no solo sea 
+          hermosa, sino también responsable con el medio ambiente.
+        </p>
+        
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">2+</div>
+            <div class="stat-label">Años de Experiencia</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Productos Únicos</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Hecho a Mano</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">★ 4.9</div>
+            <div class="stat-label">Valoración Clientes</div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter">
+  <div class="container">
+    <div class="newsletter-content">
+      <h2 class="newsletter-title">¡No Te Pierdas Nada!</h2>
+      <p class="newsletter-description">
+        Suscríbete a nuestro newsletter y sé el primero en conocer nuevas colecciones, 
+        promociones especiales y consejos para decorar tu hogar estas Navidades.
+      </p>
+      <div class="newsletter-form">
+        <input 
+          type="email" 
+          placeholder="Tu email" 
+          class="newsletter-input"
+          [(ngModel)]="email"
+        />
+        <button class="btn btn-secondary" (click)="subscribe()">Suscribirse</button>
+      </div>
+    </div>
+  </div>
+</section>
