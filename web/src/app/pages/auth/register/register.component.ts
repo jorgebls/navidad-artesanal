@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -11,8 +13,9 @@ import { CommonModule } from '@angular/common';
 })
 export class RegisterComponent {
   form!: FormGroup;
+  errorMsg = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -22,13 +25,22 @@ export class RegisterComponent {
   }
 
   onSubmit() {
+    this.errorMsg = '';
     if (this.form.invalid) return;
-    const { password, confirmPassword } = this.form.value;
+
+    const { name, email, password, confirmPassword } = this.form.value as
+      { name: string; email: string; password: string; confirmPassword: string };
+
     if (password !== confirmPassword) {
-      alert('Las contraseñas no coinciden');
+      this.errorMsg = 'Las contraseñas no coinciden';
       return;
     }
-    console.log('REGISTRO ->', this.form.value);
-    alert('Registro simulado. En el siguiente paso lo conectamos a localStorage.');
+
+    const res = this.auth.register(name, email, password);
+    if (!res.ok) {
+      this.errorMsg = res.msg || 'No se pudo registrar';
+      return;
+    }
+    this.router.navigateByUrl('/');
   }
 }
