@@ -6,4 +6,5 @@ export const routes: Routes = [
   { path: 'producto/:id', loadComponent: () => import('./pages/product-detail/product-detail.component').then(m => m.ProductDetailComponent) },
   { path: 'carrito', loadComponent: () => import('./pages/cart/cart.component').then(m => m.CartComponent) },  // si ya la tienes creada
   { path: 'login', loadComponent: () => import('./pages/auth/login/login.component').then(m => m.LoginComponent) },
+  { path: 'registro', loadComponent: () => import('./pages/auth/register/register.component').then(m => m.RegisterComponent) },
 ];

@@ -1,0 +1,27 @@
+<section class="register">
+    <h2>Registro</h2>
+  
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <label>
+        Nombre
+        <input type="text" formControlName="name" />
+      </label>
+  
+      <label>
+        Correo electrónico
+        <input type="email" formControlName="email" />
+      </label>
+  
+      <label>
+        Contraseña
+        <input type="password" formControlName="password" />
+      </label>
+  
+      <label>
+        Confirmar contraseña
+        <input type="password" formControlName="confirmPassword" />
+      </label>
+  
+      <button type="submit" [disabled]="form.invalid">Registrarse</button>
+    </form>
+  </section>

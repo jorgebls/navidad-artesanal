@@ -1,0 +1,11 @@
+.register { max-width: 420px; margin: 2rem auto; }
+h2 { color: #b71c1c; }
+label { display: block; margin: 0.75rem 0; }
+input {
+  width: 100%; padding: 0.6rem 0.7rem; border: 1px solid #ddd; border-radius: 6px;
+}
+button {
+  margin-top: 1rem; padding: 0.6rem 1rem; border: 0; border-radius: 6px;
+  background: #b71c1c; color: #fff; cursor: pointer;
+}
+button[disabled] { opacity: 0.6; cursor: not-allowed; }
