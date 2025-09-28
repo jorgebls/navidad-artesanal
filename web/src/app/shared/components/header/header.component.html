@@ -7,11 +7,19 @@
   
       <nav class="nav" aria-label="Principal">
         <a routerLink="/catalogo" routerLinkActive="active" class="nav-link">Catálogo</a>
+      
         <a routerLink="/carrito" routerLinkActive="active" class="nav-link">
-            Carrito
-            <span class="badge" *ngIf="count > 0" aria-label="artículos en carrito">{{ count }}</span>
-          </a>
-        <a routerLink="/login"    routerLinkActive="active" class="btn btn-ghost">Iniciar sesion</a>
+          Carrito
+          <span class="badge" *ngIf="count > 0">{{ count }}</span>
+        </a>
+      
+        <ng-container *ngIf="!user; else loggedIn">
+          <a routerLink="/login" routerLinkActive="active" class="btn btn-ghost">Entrar</a>
+        </ng-container>
+      
+        <ng-template #loggedIn>
+            <a routerLink="/perfil" class="btn btn-solid">Mi perfil</a>
+          </ng-template>
       </nav>
     </div>
   </header>

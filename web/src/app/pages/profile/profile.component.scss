@@ -1,0 +1,16 @@
+.profile {
+    padding: 1rem;
+  }
+  button {
+    margin-top: 1rem;
+    padding: .6rem 1rem;
+    border: 1px solid #b71c1c;
+    border-radius: 8px;
+    background: transparent;
+    color: #b71c1c;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #b71c1c;
+    color: #fff;
+  }
