@@ -65,15 +65,5 @@ Por defecto estará disponible en:
 
 ⸻
 
-📌 Notas
-	•	Proyecto probado en macOS y Windows.
-	•	Para cualquier error en dependencias, eliminar la carpeta node_modules/ y correr npm install de nuevo.
-	•	Las imágenes y datos de ejemplo están en la carpeta public/assets/.
 
-⸻
 
-👥 Equipo
-
-Proyecto académico desarrollado por Navidad Artesanal Team.
-
-¿Quieres que el siguiente paso sea que te prepare el commit para agregar este `README.md` al repo (`docs: add initial README`)?
