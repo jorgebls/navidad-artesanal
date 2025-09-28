@@ -1,0 +1,11 @@
+.detail { padding: 1rem; }
+.back { display: inline-block; margin-bottom: 1rem; text-decoration: none; }
+.card { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: start; }
+.card img { width: 100%; border-radius: 12px; object-fit: cover; max-height: 360px; }
+.info h2 { margin: 0 0 .5rem; color: #b71c1c; }
+.price { font-weight: 700; color: #c8a600; margin: 0 0 .75rem; }
+.desc { color: #444; }
+button {
+  margin-top: 1rem; padding: .6rem 1rem; border: 0; border-radius: 8px;
+  background: #b71c1c; color: #fff; cursor: not-allowed; opacity: .7;
+}

@@ -1,4 +1,19 @@
-<section class="product-detail">
-    <h2>Detalle de producto</h2>
-    <p>ID recibido en la ruta: <strong>{{ productId }}</strong></p>
+<section class="detail" *ngIf="product; else notFound">
+    <a routerLink="/catalogo" class="back">← Volver al catálogo</a>
+  
+    <div class="card">
+      <img [src]="product.image" [alt]="product.name" />
+      <div class="info">
+        <h2>{{ product.name }}</h2>
+        <p class="price">$ {{ product.price | number:'1.0-0' }}</p>
+        <p class="desc">{{ product.description }}</p>
+  
+        <!-- Próximo paso: botón Añadir al carrito -->
+        <button disabled title="Próximo paso">Añadir al carrito</button>
+      </div>
+    </div>
   </section>
+  
+  <ng-template #notFound>
+    <p>No encontramos este producto. <a routerLink="/catalogo">Volver</a></p>
+  </ng-template>
