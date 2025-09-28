@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
+import { ProductsService } from './core/services/products.service';
 
 @Component({
   selector: 'app-root',
@@ -16,4 +17,8 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   `,
   styles: [`.container{max-width:1100px;margin:0 auto;padding:1rem}`]
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private products: ProductsService) {
+    this.products.seedIfEmpty();
+  }
+}

@@ -1,0 +1,23 @@
+[
+    {
+      "id": "p1",
+      "name": "Bolita roja clásica",
+      "description": "Bolita navideña artesanal en color rojo brillante.",
+      "price": 12000,
+      "image": "assets/img/bolita-roja.jpg"
+    },
+    {
+      "id": "p2",
+      "name": "Moño dorado festivo",
+      "description": "Moño decorativo artesanal en tono dorado.",
+      "price": 8000,
+      "image": "assets/img/mono-dorado.jpg"
+    },
+    {
+      "id": "p3",
+      "name": "Caja navideña pequeña",
+      "description": "Caja artesanal para regalos navideños.",
+      "price": 15000,
+      "image": "assets/img/caja-navidad.jpg"
+    }
+  ]
