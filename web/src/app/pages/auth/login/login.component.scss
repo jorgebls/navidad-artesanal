@@ -10,3 +10,17 @@ button {
 }
 button[disabled] { opacity: 0.6; cursor: not-allowed; }
 .error { color: #b71c1c; font-size: 0.9rem; }
+
+.register-hint {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #444;
+  }
+.register-hint a {
+    color: #b71c1c;
+    font-weight: 600;
+    text-decoration: none;
+  }
+.register-hint a:hover {
+    text-decoration: underline;
+  }

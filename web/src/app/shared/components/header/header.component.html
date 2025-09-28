@@ -1,10 +1,17 @@
 <header class="header">
-    <div class="container">
-      <a routerLink="/" class="brand">Navidad Artesanal</a>
-      <nav class="nav">
-        <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
-        <a routerLink="/carrito" routerLinkActive="active">Carrito</a>
-        <a routerLink="/login" routerLinkActive="active">Entrar</a>
+    <div class="wrap">
+      <a routerLink="/" class="brand" aria-label="Inicio Navidad Artesanal">
+        <span class="brand-logo">🎄</span>
+        <span class="brand-name">Navidad Artesanal</span>
+      </a>
+  
+      <nav class="nav" aria-label="Principal">
+        <a routerLink="/catalogo" routerLinkActive="active" class="nav-link">Catálogo</a>
+        <a routerLink="/carrito" routerLinkActive="active" class="nav-link">
+            Carrito
+            <span class="badge" *ngIf="count > 0" aria-label="artículos en carrito">{{ count }}</span>
+          </a>
+        <a routerLink="/login"    routerLinkActive="active" class="btn btn-ghost">Iniciar sesion</a>
       </nav>
     </div>
   </header>

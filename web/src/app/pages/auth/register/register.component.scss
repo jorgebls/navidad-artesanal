@@ -9,3 +9,17 @@ button {
   background: #b71c1c; color: #fff; cursor: pointer;
 }
 button[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+.login-hint {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #444;
+  }
+.login-hint a {
+    color: #b71c1c;
+    font-weight: 600;
+    text-decoration: none;
+  }
+.login-hint a:hover {
+    text-decoration: underline;
+  }
