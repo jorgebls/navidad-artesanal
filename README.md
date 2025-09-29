@@ -1,4 +1,5 @@
 
+
 # 🎄 Navidad Artesanal
 
 Aplicación web para la venta de artículos navideños artesanales (bolitas, moños, cajas, tambores).  
@@ -63,6 +64,4 @@ Por defecto estará disponible en:
 	•	Header dinámico según sesión
 
 ⸻
-
-
 
