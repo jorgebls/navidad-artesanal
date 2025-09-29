@@ -1,28 +1,53 @@
 <section class="register">
-    <h2>Registro</h2>
+  <div class="register-card">
+    <h2>Crea tu cuenta</h2>
     <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
-  
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <label>Nombre
-        <input type="text" formControlName="name" />
-      </label>
-  
+      <div class="row">
+        <label>Nombre
+          <input type="text" formControlName="firstName" autocomplete="given-name" />
+        </label>
+
+        <label>Apellidos
+          <input type="text" formControlName="lastName" autocomplete="family-name" />
+        </label>
+      </div>
+
       <label>Correo electrónico
-        <input type="email" formControlName="email" />
+        <input type="email" formControlName="email" autocomplete="email" />
       </label>
-  
-      <label>Contraseña
-        <input type="password" formControlName="password" />
+
+      <div class="row">
+        <label>Teléfono
+          <input type="tel" formControlName="phone" autocomplete="tel" />
+        </label>
+
+        <label>Cédula
+          <input type="text" formControlName="documentId" autocomplete="off" />
+        </label>
+      </div>
+
+      <label>Dirección
+        <input type="text" formControlName="address" autocomplete="street-address" />
       </label>
-  
-      <label>Confirmar contraseña
-        <input type="password" formControlName="confirmPassword" />
-      </label>
-  
-      <button type="submit" [disabled]="form.invalid">Registrarse</button>
+
+      <div class="row">
+        <label>Contraseña
+          <input type="password" formControlName="password" autocomplete="new-password" />
+        </label>
+
+        <label>Confirmar contraseña
+          <input type="password" formControlName="confirmPassword" autocomplete="new-password" />
+        </label>
+      </div>
+
+      <button type="submit" [disabled]="form.invalid">Registrarme</button>
     </form>
+
     <p class="login-hint">
-        ¿Ya tienes cuenta?
-        <a routerLink="/login">Inicia sesión aquí</a>
-      </p>
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Inicia sesión aquí</a>
+    </p>
+  </div>
 </section>

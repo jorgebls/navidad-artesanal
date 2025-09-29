@@ -1,21 +1,85 @@
-.login { max-width: 420px; margin: 2rem auto; }
-h2 { color: #b71c1c; }
-label { display: block; margin: 0.75rem 0; }
+@use "sass:color";
+
+.login {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 1.5rem 6rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(183, 28, 28, 0.08);
+}
+
+h2 {
+  color: #b71c1c;
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin: 0.75rem 0;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
 input {
-  width: 100%; padding: 0.6rem 0.7rem; border: 1px solid #ddd; border-radius: 6px;
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #d5d8dc;
+  border-radius: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #c8a600;
+    box-shadow: 0 0 0 4px rgba(200, 166, 0, 0.15);
+  }
 }
+
 button {
-  margin-top: 1rem; padding: 0.6rem 1rem; border: 0; border-radius: 6px;
-  background: #c8a600; color: #fff; cursor: pointer;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #c8a600, #f1c40f);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+
+  &:hover:not([disabled]) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(200, 166, 0, 0.35);
+    filter: brightness(1.02);
+  }
 }
-button[disabled] { opacity: 0.6; cursor: not-allowed; }
-.error { color: #b71c1c; font-size: 0.9rem; }
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.error {
+  color: #b71c1c;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
 
 .register-hint {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    color: #444;
-  }
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: #444;
+  text-align: center;
+}
 .register-hint a {
     color: #b71c1c;
     font-weight: 600;

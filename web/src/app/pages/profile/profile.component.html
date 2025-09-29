@@ -1,7 +1,10 @@
 <section class="profile" *ngIf="user; else noUser">
     <h2>Mi perfil</h2>
-    <p><strong>Nombre:</strong> {{ user.name }}</p>
+    <p><strong>Nombre:</strong> {{ user.firstName }} {{ user.lastName }}</p>
     <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Teléfono:</strong> {{ user.phone || '—' }}</p>
+    <p><strong>Cédula:</strong> {{ user.documentId || '—' }}</p>
+    <p><strong>Dirección:</strong> {{ user.address || '—' }}</p>
   
     <button (click)="logout()" class="btn btn-ghost">Cerrar sesión</button>
   </section>
