@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService, CartItem } from '../../core/services/cart.service';
@@ -13,21 +13,30 @@ import { CartService, CartItem } from '../../core/services/cart.service';
 export class CartComponent {
   private cartService = inject(CartService);
 
+  private readonly itemsSignal = this.cartService.items;
+  private readonly totalSignal = computed(() =>
+    this.itemsSignal().reduce((acc, item) => acc + item.product.price * item.qty, 0)
+  );
+  private readonly countSignal = computed(() =>
+    this.itemsSignal().reduce((acc, item) => acc + item.qty, 0)
+  );
+  private readonly emptySignal = computed(() => this.itemsSignal().length === 0);
+
   // Getters para usar en el template
   get items(): CartItem[] {
-    return this.cartService.all();
+    return this.itemsSignal();
   }
 
   get total(): number {
-    return this.cartService.total();
+    return this.totalSignal();
   }
 
   get count(): number {
-    return this.cartService.count();
+    return this.countSignal();
   }
 
   get isEmpty(): boolean {
-    return this.cartService.isEmpty();
+    return this.emptySignal();
   }
 
   // Métodos para el template
