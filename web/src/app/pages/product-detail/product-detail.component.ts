@@ -21,28 +21,59 @@ export class ProductDetailComponent implements OnInit {
   product: Product | undefined;
   quantity = 1;
   isInCart = false;
+  selectedSize = 'M';
+  readonly availableSizes = ['XS', 'S', 'M', 'L', 'XL'];
 
   async ngOnInit() {
     await this.products.seedIfEmpty();
     const id = this.route.snapshot.paramMap.get('id')!;
     this.product = this.products.getById(id);
-    
     if (this.product) {
-      this.isInCart = this.cartService.hasItem(this.product.id);
+      const existingItem = this.cartService
+        .all()
+        .find(item => item.product.id === this.product!.id);
+      if (existingItem) {
+        this.selectedSize = existingItem.size;
+      }
     }
+
+    this.syncCartState();
   }
 
   addToCart(): void {
     if (this.product) {
-      this.cartService.add(this.product, this.quantity);
-      this.isInCart = true;
+      this.cartService.add(this.product, this.quantity, this.selectedSize);
+      this.syncCartState();
     }
   }
 
+  onSizeChange(size: string): void {
+    this.selectedSize = size.toUpperCase();
+    this.syncCartState();
+  }
+
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
+  }
+
+  private syncCartState(): void {
+    if (!this.product) {
+      this.isInCart = false;
+      return;
+    }
+
+    const existing = this.cartService.getItem(this.product.id, this.selectedSize);
+    if (existing) {
+      this.quantity = existing.qty;
+      this.isInCart = true;
+    } else {
+      this.quantity = 1;
+      this.isInCart = false;
+    }
   }
 }

@@ -1,12 +1,13 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { CartService, CartItem } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
 })
@@ -40,14 +41,14 @@ export class CartComponent {
   }
 
   // Métodos para el template
-  updateQuantity(productId: string, event: Event): void {
+  updateQuantity(productId: string, size: string, event: Event): void {
     const target = event.target as HTMLInputElement;
     const qty = parseInt(target.value) || 0;
-    this.cartService.updateQty(productId, qty);
+    this.cartService.updateQty(productId, size, qty);
   }
 
-  removeItem(productId: string): void {
-    this.cartService.remove(productId);
+  removeItem(productId: string, size: string): void {
+    this.cartService.remove(productId, size);
   }
 
   clearCart(): void {
@@ -55,13 +56,15 @@ export class CartComponent {
   }
 
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
   }
 
   trackByProductId(index: number, item: CartItem): string {
-    return item.product.id;
+    return `${item.product.id}-${item.size}`;
   }
 }

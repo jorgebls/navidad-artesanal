@@ -18,18 +18,19 @@
           <h3 class="item-name">{{ item.product.name }}</h3>
           <p class="item-description">{{ item.product.description }}</p>
           <div class="item-price">{{ formatPrice(item.product.price) }}</div>
+          <div class="item-size">Talla: {{ item.size }}</div>
         </div>
         
         <div class="item-controls">
           <div class="quantity-controls">
-            <label for="qty-{{ item.product.id }}">Cantidad:</label>
+            <label for="qty-{{ item.product.id }}-{{ item.size }}">Cantidad:</label>
             <input 
               type="number" 
-              id="qty-{{ item.product.id }}"
+              id="qty-{{ item.product.id }}-{{ item.size }}"
               [value]="item.qty" 
               min="1" 
               max="99"
-              (change)="updateQuantity(item.product.id, $event)"
+              (change)="updateQuantity(item.product.id, item.size, $event)"
               class="quantity-input"
             />
           </div>
@@ -41,7 +42,7 @@
           <button 
             type="button" 
             class="remove-btn"
-            (click)="removeItem(item.product.id)"
+            (click)="removeItem(item.product.id, item.size)"
             title="Eliminar del carrito"
           >
             🗑️

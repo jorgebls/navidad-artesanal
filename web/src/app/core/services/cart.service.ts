@@ -6,6 +6,7 @@ import { Product } from '../../shared/models/product.model';
 export interface CartItem {
   product: Product;
   qty: number;
+  size: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +27,13 @@ export class CartService {
   }
 
   private loadFromStorage(): CartItem[] {
-    return this.storage.get<CartItem[]>(LS.CART, []);
+    const stored = this.storage.get<CartItem[]>(LS.CART, []);
+    return stored.map(item => ({
+      ...item,
+      size: (item as Partial<CartItem>).size
+        ? String(item.size).toUpperCase()
+        : 'M'
+    }));
   }
 
   private saveToStorage(items: CartItem[]): void {
@@ -46,32 +53,37 @@ export class CartService {
     return this.itemsValue.reduce((acc, item) => acc + (item.product.price * item.qty), 0);
   }
 
-  add(product: Product, qty = 1): void {
+  add(product: Product, qty = 1, size = 'M'): void {
+    const normalizedSize = size.toUpperCase();
     const items = [...this.itemsValue];
-    const existing = items.find(i => i.product.id === product.id);
-    
+    const existing = items.find(i => i.product.id === product.id && i.size === normalizedSize);
+
     if (existing) {
       existing.qty += qty;
     } else {
-      items.push({ product, qty });
+      items.push({ product, qty, size: normalizedSize });
     }
-    
+
     this.itemsValue = items;
   }
 
-  remove(productId: string): void {
-    const items = this.itemsValue.filter(item => item.product.id !== productId);
+  remove(productId: string, size: string): void {
+    const normalizedSize = size.toUpperCase();
+    const items = this.itemsValue.filter(
+      item => !(item.product.id === productId && item.size === normalizedSize)
+    );
     this.itemsValue = items;
   }
 
-  updateQty(productId: string, qty: number): void {
+  updateQty(productId: string, size: string, qty: number): void {
+    const normalizedSize = size.toUpperCase();
     if (qty <= 0) {
-      this.remove(productId);
+      this.remove(productId, normalizedSize);
       return;
     }
 
     const items = [...this.itemsValue];
-    const existing = items.find(i => i.product.id === productId);
+    const existing = items.find(i => i.product.id === productId && i.size === normalizedSize);
     
     if (existing) {
       existing.qty = qty;
@@ -79,12 +91,14 @@ export class CartService {
     }
   }
 
-  getItem(productId: string): CartItem | undefined {
-    return this.itemsValue.find(item => item.product.id === productId);
+  getItem(productId: string, size: string): CartItem | undefined {
+    const normalizedSize = size.toUpperCase();
+    return this.itemsValue.find(item => item.product.id === productId && item.size === normalizedSize);
   }
 
-  hasItem(productId: string): boolean {
-    return this.itemsValue.some(item => item.product.id === productId);
+  hasItem(productId: string, size: string): boolean {
+    const normalizedSize = size.toUpperCase();
+    return this.itemsValue.some(item => item.product.id === productId && item.size === normalizedSize);
   }
 
   clear(): void {

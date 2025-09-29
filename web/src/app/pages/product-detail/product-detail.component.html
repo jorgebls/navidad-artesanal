@@ -7,7 +7,21 @@
         <h2>{{ product.name }}</h2>
         <p class="price">{{ formatPrice(product.price) }}</p>
         <p class="desc">{{ product.description }}</p>
-  
+
+        <div class="size-selector">
+          <label for="size">Talla:</label>
+          <select
+            id="size"
+            class="size-select"
+            [(ngModel)]="selectedSize"
+            (ngModelChange)="onSizeChange($event)"
+          >
+            <option *ngFor="let size of availableSizes" [value]="size">
+              {{ size }}
+            </option>
+          </select>
+        </div>
+
         <div class="add-to-cart" *ngIf="!isInCart">
           <div class="quantity-selector">
             <label for="quantity">Cantidad:</label>
