@@ -1,4 +1,3 @@
-¡Entendido, Jorge! 🙌 Aquí tienes todo en una sola celda Markdown, listo para copiar directo como README.md:
 
 # 🎄 Navidad Artesanal
 
@@ -7,7 +6,7 @@ Proyecto universitario desarrollado en **Angular**.
 
 ---
 
-## 🚀 Requisitos previos (Windows)
+##  Requisitos previos (Windows)
 
 Antes de clonar el repositorio, asegúrate de tener instalado:
 
@@ -70,8 +69,3 @@ Por defecto estará disponible en:
 	•	Para cualquier error en dependencias, eliminar la carpeta node_modules/ y correr npm install de nuevo.
 	•	Las imágenes y datos de ejemplo están en la carpeta public/assets/.
 
-⸻
-
-👥 Equipo
-
-Proyecto académico desarrollado por Navidad Artesanal Team.
