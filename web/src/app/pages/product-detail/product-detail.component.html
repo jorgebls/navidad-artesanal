@@ -9,15 +9,16 @@
         <p class="desc">{{ currentDescription }}</p>
 
         <div class="size-selector">
-          <label for="size">Talla:</label>
+          <label for="size">Tamaño:</label>
           <select
             id="size"
             class="size-select"
             [(ngModel)]="selectedSize"
             (ngModelChange)="onSizeChange($event)"
+            translate="no"
           >
-            <option *ngFor="let size of availableSizes" [value]="size">
-              {{ size }}
+            <option *ngFor="let size of availableSizes" [value]="size" translate="no">
+              {{ sizeLabel(size) }}
             </option>
           </select>
         </div>

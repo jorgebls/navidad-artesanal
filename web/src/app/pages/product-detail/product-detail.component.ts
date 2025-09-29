@@ -87,6 +87,20 @@ export class ProductDetailComponent implements OnInit {
     return variants.map(v => v.size.toUpperCase());
   }
 
+  sizeLabel(size: string): string {
+    const normalized = size.toUpperCase();
+    switch (normalized) {
+      case 'XS':
+      case 'S':
+      case 'M':
+      case 'L':
+      case 'XL':
+        return normalized;
+      default:
+        return normalized;
+    }
+  }
+
   get selectedVariant(): ProductSizeVariant | undefined {
     const variants = this.product?.sizes;
     if (!variants || variants.length === 0) return undefined;
