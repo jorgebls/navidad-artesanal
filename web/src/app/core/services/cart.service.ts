@@ -56,12 +56,14 @@ export class CartService {
   add(product: Product, qty = 1, size = 'M'): void {
     const normalizedSize = size.toUpperCase();
     const items = [...this.itemsValue];
+    const productSnapshot: Product = { ...product };
     const existing = items.find(i => i.product.id === product.id && i.size === normalizedSize);
 
     if (existing) {
       existing.qty += qty;
+      existing.product = productSnapshot;
     } else {
-      items.push({ product, qty, size: normalizedSize });
+      items.push({ product: productSnapshot, qty, size: normalizedSize });
     }
 
     this.itemsValue = items;

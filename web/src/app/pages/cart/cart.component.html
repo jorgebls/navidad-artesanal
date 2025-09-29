@@ -53,9 +53,17 @@
     
     <div class="cart-footer">
       <div class="cart-total">
+        <div class="summary-line">
+          <span>Subtotal:</span>
+          <strong>{{ formatPrice(total) }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Envío:</span>
+          <strong>{{ formatPrice(shippingCost) }}</strong>
+        </div>
         <div class="total-line">
           <span>Total:</span>
-          <strong class="total-amount">{{ formatPrice(total) }}</strong>
+          <strong class="total-amount">{{ formatPrice(grandTotal) }}</strong>
         </div>
       </div>
       
@@ -73,8 +81,53 @@
           type="button" 
           class="checkout-btn"
           *ngIf="!isEmpty"
+          (click)="proceedToCheckout()"
         >
           Proceder al Pago
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div 
+    class="checkout-overlay"
+    *ngIf="isCheckoutPromptVisible"
+    (click)="closeCheckoutPrompt()"
+    aria-hidden="true"
+  >
+    <div 
+      class="checkout-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkoutPromptTitle"
+      aria-describedby="checkoutPromptDescription"
+      (click)="$event.stopPropagation()"
+    >
+      <h3 id="checkoutPromptTitle">Inicia sesión para continuar</h3>
+      <p id="checkoutPromptDescription">
+        Para completar tu compra necesitas iniciar sesión o registrarte.
+      </p>
+      <div class="modal-actions">
+        <a 
+          routerLink="/login"
+          class="modal-btn primary"
+          (click)="closeCheckoutPrompt()"
+        >
+          Iniciar sesión
+        </a>
+        <a 
+          routerLink="/registro"
+          class="modal-btn"
+          (click)="closeCheckoutPrompt()"
+        >
+          Registrarme
+        </a>
+        <button 
+          type="button"
+          class="modal-btn ghost"
+          (click)="closeCheckoutPrompt()"
+        >
+          Volver
         </button>
       </div>
     </div>

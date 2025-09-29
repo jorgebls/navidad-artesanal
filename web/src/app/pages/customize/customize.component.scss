@@ -1,0 +1,45 @@
+.customize {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  padding: 3rem 1.5rem;
+  background: linear-gradient(135deg, rgba(183, 28, 28, 0.1), rgba(255, 215, 0, 0.1));
+}
+
+.content {
+  max-width: 720px;
+  text-align: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: 2.5rem;
+  color: #b71c1c;
+}
+
+.subtitle {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  color: #34495e;
+  font-weight: 600;
+}
+
+.status {
+  margin: 0;
+  font-size: 1rem;
+  color: #566573;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 2rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+}

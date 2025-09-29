@@ -14,6 +14,7 @@ import { Product } from '../../shared/models/product.model';
 export class CatalogComponent implements OnInit {
   private svc = inject(ProductsService);
   products: Product[] = [];
+  private readonly defaultSize = 'M';
 
   async ngOnInit() {
     await this.svc.seedIfEmpty();    
@@ -23,5 +24,10 @@ export class CatalogComponent implements OnInit {
 
   onImgError(ev: Event) {
     (ev.target as HTMLImageElement).src = 'assets/img/images.jpg';
+  }
+
+  priceForDefaultSize(product: Product): number {
+    const variant = product.sizes?.find(v => v.size.toUpperCase() === this.defaultSize);
+    return variant?.price ?? product.price;
   }
 }

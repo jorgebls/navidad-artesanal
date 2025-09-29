@@ -4,20 +4,101 @@
       "name": "Bolita roja clásica",
       "description": "Bolita navideña artesanal en color rojo brillante.",
       "price": 12000,
-      "image": "assets/img/images.jpeg"
+      "image": "assets/img/images.jpeg",
+      "sizes": [
+        {
+          "size": "XS",
+          "price": 9000,
+          "description": "Bolita roja XS para centros de mesa y mini arbolitos."
+        },
+        {
+          "size": "S",
+          "price": 10500,
+          "description": "Bolita roja S con brillo suave para detalles delicados."
+        },
+        {
+          "size": "M",
+          "price": 12000,
+          "description": "Bolita roja M con acabado brillante, tamaño clásico."
+        },
+        {
+          "size": "L",
+          "price": 13500,
+          "description": "Bolita roja L para destacar en el árbol."
+        },
+        {
+          "size": "XL",
+          "price": 15500,
+          "description": "Bolita roja XL para decoraciones llamativas."
+        }
+      ]
     },
     {
       "id": "p2",
       "name": "Moño dorado festivo",
       "description": "Moño decorativo artesanal en tono dorado.",
       "price": 8000,
-      "image": "assets/img/images.jpeg"
+      "image": "assets/img/images.jpeg",
+      "sizes": [
+        {
+          "size": "XS",
+          "price": 6500,
+          "description": "Moño dorado XS para regalos pequeños."
+        },
+        {
+          "size": "S",
+          "price": 7200,
+          "description": "Moño dorado S con cintas finas brillantes."
+        },
+        {
+          "size": "M",
+          "price": 8000,
+          "description": "Moño dorado M ideal para coronas y obsequios medianos."
+        },
+        {
+          "size": "L",
+          "price": 9200,
+          "description": "Moño dorado L con lazada volumétrica."
+        },
+        {
+          "size": "XL",
+          "price": 10500,
+          "description": "Moño dorado XL para decoraciones principales."
+        }
+      ]
     },
     {
       "id": "p3",
       "name": "Caja navideña pequeña",
       "description": "Caja artesanal para regalos navideños.",
       "price": 15000,
-      "image": "assets/img/images.jpeg"
+      "image": "assets/img/images.jpeg",
+      "sizes": [
+        {
+          "size": "XS",
+          "price": 12000,
+          "description": "Caja XS para detalles hechos a mano."
+        },
+        {
+          "size": "S",
+          "price": 13500,
+          "description": "Caja S con detalles calados en madera."
+        },
+        {
+          "size": "M",
+          "price": 15000,
+          "description": "Caja M para regalos medianos con lazo incluido."
+        },
+        {
+          "size": "L",
+          "price": 17000,
+          "description": "Caja L reforzada para presentes especiales."
+        },
+        {
+          "size": "XL",
+          "price": 19500,
+          "description": "Caja XL con compartimentos internos."
+        }
+      ]
     }
   ]

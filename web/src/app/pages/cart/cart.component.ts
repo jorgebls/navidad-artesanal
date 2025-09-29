@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -22,6 +22,8 @@ export class CartComponent {
     this.itemsSignal().reduce((acc, item) => acc + item.qty, 0)
   );
   private readonly emptySignal = computed(() => this.itemsSignal().length === 0);
+  private readonly checkoutPromptSignal = signal(false);
+  private readonly shippingCostSignal = signal(10000);
 
   // Getters para usar en el template
   get items(): CartItem[] {
@@ -32,12 +34,24 @@ export class CartComponent {
     return this.totalSignal();
   }
 
+  get shippingCost(): number {
+    return this.shippingCostSignal();
+  }
+
+  get grandTotal(): number {
+    return this.total + this.shippingCost;
+  }
+
   get count(): number {
     return this.countSignal();
   }
 
   get isEmpty(): boolean {
     return this.emptySignal();
+  }
+
+  get isCheckoutPromptVisible(): boolean {
+    return this.checkoutPromptSignal();
   }
 
   // Métodos para el template
@@ -53,6 +67,14 @@ export class CartComponent {
 
   clearCart(): void {
     this.cartService.clear();
+  }
+
+  proceedToCheckout(): void {
+    this.checkoutPromptSignal.set(true);
+  }
+
+  closeCheckoutPrompt(): void {
+    this.checkoutPromptSignal.set(false);
   }
 
   formatPrice(price: number): string {

@@ -9,7 +9,10 @@
           loading="lazy"
           (error)="onImgError($event)"  />
         <h3>{{ p.name }}</h3>
-        <p class="price">{{ p.price | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}</p>
+        <p class="price">
+          {{ priceForDefaultSize(p) | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}
+          <span class="size-tag">Talla M</span>
+        </p>
       </a>
     </div>
   

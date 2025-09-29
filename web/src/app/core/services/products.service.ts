@@ -12,7 +12,8 @@ export class ProductsService {
 
   async seedIfEmpty() {
     const existing = this.storage.get<Product[]>(LS.PRODUCTS, []);
-    if (existing.length > 0) return;
+    const needsSeed = existing.length === 0 || existing.some(p => !p.sizes || p.sizes.length === 0);
+    if (!needsSeed) return;
 
     const products = await firstValueFrom(
       this.http.get<Product[]>('assets/data/products.json')
@@ -21,7 +22,14 @@ export class ProductsService {
   }
 
   getAll(): Product[] {
-    return this.storage.get<Product[]>(LS.PRODUCTS, []);
+    const products = this.storage.get<Product[]>(LS.PRODUCTS, []);
+    return products.map(p => ({
+      ...p,
+      sizes: p.sizes?.map(variant => ({
+        ...variant,
+        size: variant.size.toUpperCase()
+      }))
+    }));
   }
 
   getById(id: string): Product | undefined {

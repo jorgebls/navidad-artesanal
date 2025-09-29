@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductsService } from '../../core/services/products.service';
 import { CartService } from '../../core/services/cart.service';
-import { Product } from '../../shared/models/product.model';
+import { Product, ProductSizeVariant } from '../../shared/models/product.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -22,29 +22,29 @@ export class ProductDetailComponent implements OnInit {
   quantity = 1;
   isInCart = false;
   selectedSize = 'M';
-  readonly availableSizes = ['XS', 'S', 'M', 'L', 'XL'];
+  private readonly defaultSize = 'M';
 
   async ngOnInit() {
     await this.products.seedIfEmpty();
     const id = this.route.snapshot.paramMap.get('id')!;
     this.product = this.products.getById(id);
-    if (this.product) {
-      const existingItem = this.cartService
-        .all()
-        .find(item => item.product.id === this.product!.id);
-      if (existingItem) {
-        this.selectedSize = existingItem.size;
-      }
-    }
-
+    this.selectedSize = this.resolveInitialSize();
     this.syncCartState();
   }
 
   addToCart(): void {
-    if (this.product) {
-      this.cartService.add(this.product, this.quantity, this.selectedSize);
-      this.syncCartState();
-    }
+    if (!this.product) return;
+
+    const variant = this.selectedVariant;
+    const productSnapshot: Product = {
+      ...this.product,
+      price: variant?.price ?? this.product.price,
+      description: variant?.description ?? this.product.description,
+      image: variant?.image ?? this.product.image
+    };
+
+    this.cartService.add(productSnapshot, this.quantity, this.selectedSize);
+    this.syncCartState();
   }
 
   onSizeChange(size: string): void {
@@ -67,6 +67,8 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
+    this.ensureValidSize();
+
     const existing = this.cartService.getItem(this.product.id, this.selectedSize);
     if (existing) {
       this.quantity = existing.qty;
@@ -74,6 +76,67 @@ export class ProductDetailComponent implements OnInit {
     } else {
       this.quantity = 1;
       this.isInCart = false;
+    }
+  }
+
+  get availableSizes(): string[] {
+    const variants = this.product?.sizes;
+    if (!variants || variants.length === 0) {
+      return [this.defaultSize];
+    }
+    return variants.map(v => v.size.toUpperCase());
+  }
+
+  get selectedVariant(): ProductSizeVariant | undefined {
+    const variants = this.product?.sizes;
+    if (!variants || variants.length === 0) return undefined;
+    return (
+      variants.find(v => v.size.toUpperCase() === this.selectedSize) ||
+      variants.find(v => v.size.toUpperCase() === this.defaultSize) ||
+      variants[0]
+    );
+  }
+
+  get currentPrice(): number {
+    if (this.selectedVariant) return this.selectedVariant.price;
+    return this.product?.price ?? 0;
+  }
+
+  get currentDescription(): string {
+    if (this.selectedVariant) return this.selectedVariant.description;
+    return this.product?.description ?? '';
+  }
+
+  get currentImage(): string {
+    if (this.selectedVariant?.image) return this.selectedVariant.image;
+    return this.product?.image ?? '';
+  }
+
+  private resolveInitialSize(): string {
+    if (!this.product) {
+      return this.defaultSize;
+    }
+
+    const cartMatch = this.cartService
+      .all()
+      .find(item => item.product.id === this.product!.id);
+    if (cartMatch) {
+      return cartMatch.size.toUpperCase();
+    }
+
+    const variants = this.product.sizes;
+    if (!variants || variants.length === 0) {
+      return this.defaultSize;
+    }
+
+    const mVariant = variants.find(v => v.size.toUpperCase() === this.defaultSize);
+    return (mVariant?.size ?? variants[0].size).toUpperCase();
+  }
+
+  private ensureValidSize(): void {
+    const sizes = this.availableSizes;
+    if (!sizes.includes(this.selectedSize)) {
+      this.selectedSize = sizes[0];
     }
   }
 }

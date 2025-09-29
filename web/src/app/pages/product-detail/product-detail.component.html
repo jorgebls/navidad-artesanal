@@ -2,11 +2,11 @@
     <a routerLink="/catalogo" class="back">← Volver al catálogo</a>
   
     <div class="card">
-      <img [src]="product.image" [alt]="product.name" />
+      <img [src]="currentImage" [alt]="product.name" />
       <div class="info">
         <h2>{{ product.name }}</h2>
-        <p class="price">{{ formatPrice(product.price) }}</p>
-        <p class="desc">{{ product.description }}</p>
+        <p class="price">{{ formatPrice(currentPrice) }}</p>
+        <p class="desc">{{ currentDescription }}</p>
 
         <div class="size-selector">
           <label for="size">Talla:</label>
