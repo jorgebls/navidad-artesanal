@@ -190,20 +190,36 @@
 <!-- Newsletter -->
 <section class="newsletter">
   <div class="container">
-    <div class="newsletter-content">
-      <h2 class="newsletter-title">¡No Te Pierdas Nada!</h2>
-      <p class="newsletter-description">
-        Suscríbete a nuestro newsletter y sé el primero en conocer nuevas colecciones, 
-        promociones especiales y consejos para decorar tu hogar estas Navidades.
-      </p>
-      <div class="newsletter-form">
-        <input 
-          type="email" 
-          placeholder="Tu email" 
-          class="newsletter-input"
-          [(ngModel)]="email"
-        />
-        <button class="btn btn-secondary" (click)="subscribe()">Suscribirse</button>
+    <div class="newsletter-card">
+      <div class="newsletter-badge">🎄</div>
+      <div class="newsletter-content">
+        <h2 class="newsletter-title">Únete al Brillo Navideño</h2>
+        <p class="newsletter-description">
+          Inscríbete para recibir lanzamientos limitados, descuentos exclusivos y tips para crear espacios mágicos estas fiestas.
+        </p>
+        <div 
+          class="newsletter-alert" 
+          *ngIf="message"
+          [class.newsletter-alert--success]="message?.type === 'success'"
+          [class.newsletter-alert--error]="message?.type === 'error'"
+        >
+          <div class="alert-icon">
+            <span *ngIf="message?.type === 'success'">✨</span>
+            <span *ngIf="message?.type === 'error'">⚠️</span>
+          </div>
+          <div class="alert-text">{{ message?.text }}</div>
+          <button type="button" class="alert-close" (click)="dismissMessage()">✕</button>
+        </div>
+        <div class="newsletter-form">
+          <input 
+            type="email" 
+            placeholder="Ingresa tu correo" 
+            class="newsletter-input"
+            [(ngModel)]="email"
+          />
+          <button class="btn btn-secondary" (click)="subscribe()">Suscribirme</button>
+        </div>
+        <p class="newsletter-note">Prometemos enviarte solo inspiración navideña, sin spam.</p>
       </div>
     </div>
   </div>

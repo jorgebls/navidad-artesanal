@@ -12,13 +12,43 @@ import { RouterLink } from '@angular/router';
 })
 export class HomeComponent {
   email = '';
+  message: { type: 'success' | 'error'; text: string } | null = null;
+  private dismissTimeout: ReturnType<typeof setTimeout> | null = null;
 
   subscribe() {
-    if (this.email) {
-      alert(`¡Gracias por suscribirte con ${this.email}!`);
-      this.email = '';
-    } else {
-      alert('Por favor, ingresa tu email');
+    const trimmedEmail = this.email.trim();
+
+    if (!trimmedEmail) {
+      this.showMessage('error', 'Por favor ingresa tu correo electrónico.');
+      return;
     }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if (!emailPattern.test(trimmedEmail)) {
+      this.showMessage('error', 'Ingresa un correo válido para continuar.');
+      return;
+    }
+
+    this.showMessage('success', `¡Gracias por suscribirte! Te enviaremos novedades a ${trimmedEmail}.`);
+    this.email = '';
+  }
+
+  dismissMessage(): void {
+    this.message = null;
+    if (this.dismissTimeout) {
+      clearTimeout(this.dismissTimeout);
+      this.dismissTimeout = null;
+    }
+  }
+
+  private showMessage(type: 'success' | 'error', text: string): void {
+    this.message = { type, text };
+    if (this.dismissTimeout) {
+      clearTimeout(this.dismissTimeout);
+    }
+    this.dismissTimeout = setTimeout(() => {
+      this.message = null;
+      this.dismissTimeout = null;
+    }, 5000);
   }
 }
