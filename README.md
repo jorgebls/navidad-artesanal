@@ -122,7 +122,7 @@ git checkout segunda_entrega
 
 ---
 
-### 11) Traer los últimos cambios de la rama remota
+### 11) Traer los últimos cambios de la rama remota(opcional)
 
 ```powershell
 git pull origin segunda_entrega
