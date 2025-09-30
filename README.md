@@ -132,15 +132,13 @@ git pull origin segunda_entrega
 
 ---
 
-### 12) Entrar a la carpeta del frontend (si aplica)
+### 12) Entrar a la carpeta del frontend 
 
 ```powershell
 cd web
 ```
 
-**Qué hace:** Entra al subdirectorio donde vive el proyecto de la web (por ejemplo, el frontend Angular/React).
-
-> Si tu proyecto **no** tiene carpeta `web`, omite este paso y ejecuta los siguientes desde la raíz donde esté el `package.json`.
+**Qué hace:** Entra al subdirectorio donde vive el proyecto de la web 
 
 ---
 
