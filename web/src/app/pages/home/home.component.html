@@ -200,14 +200,14 @@
         <div 
           class="newsletter-alert" 
           *ngIf="message"
-          [class.newsletter-alert--success]="message?.type === 'success'"
-          [class.newsletter-alert--error]="message?.type === 'error'"
+          [class.newsletter-alert--success]="message.type === 'success'"
+          [class.newsletter-alert--error]="message.type === 'error'"
         >
           <div class="alert-icon">
-            <span *ngIf="message?.type === 'success'">✨</span>
-            <span *ngIf="message?.type === 'error'">⚠️</span>
+            <span *ngIf="message.type === 'success'">✨</span>
+            <span *ngIf="message.type === 'error'">⚠️</span>
           </div>
-          <div class="alert-text">{{ message?.text }}</div>
+          <div class="alert-text">{{ message.text }}</div>
           <button type="button" class="alert-close" (click)="dismissMessage()">✕</button>
         </div>
         <div class="newsletter-form">
