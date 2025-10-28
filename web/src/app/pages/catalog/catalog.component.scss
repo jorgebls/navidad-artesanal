@@ -1,25 +1,164 @@
-.catalog { padding: 1rem; }
-h2 { color: #b71c1c; margin-bottom: 1rem; }
+.catalog {
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(183, 28, 28, 0.05), rgba(255, 215, 0, 0.05));
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  
+  h1 {
+    font-size: 2.5rem;
+    color: #b71c1c;
+    margin: 0 0 1rem;
+    font-weight: 700;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+    color: #34495e;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+// Category Selection
+.category-selection {
+  margin-bottom: 3rem;
+  
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.category-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #b71c1c;
+  }
+  
+  &.active {
+    border-color: #b71c1c;
+    background: linear-gradient(135deg, #b71c1c, #d32f2f);
+    color: white;
+    
+    .category-icon .icon {
+      transform: scale(1.2);
+    }
+  }
+  
+  &.all-products {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-color: #6c757d;
+    
+    &.active {
+      background: linear-gradient(135deg, #6c757d, #495057);
+      border-color: #495057;
+    }
+  }
+  
+  .category-icon {
+    margin-bottom: 1rem;
+    
+    .icon {
+      font-size: 3rem;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+  }
+  
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+}
+
+// Products Section
+.products-section {
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+}
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .card {
   display: block;
+  background: white;
   border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 0.75rem;
+  border-radius: 16px;
+  padding: 1rem;
   color: inherit;
   text-decoration: none;
-  transition: transform .12s ease, box-shadow .12s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  
+  &:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #b71c1c;
+  }
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.08); }
 
-.card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
-.card h3 { margin: .5rem 0 .25rem; font-size: 1.05rem; }
+.card img { 
+  width: 100%; 
+  height: 200px; 
+  object-fit: cover; 
+  border-radius: 12px; 
+  margin-bottom: 1rem;
+}
+
+.card h3 { 
+  margin: 0 0 0.5rem; 
+  font-size: 1.1rem; 
+  font-weight: 600;
+  color: #2c3e50;
+}
+
 .card .price {
   font-weight: 700;
   color: #c8a600;
@@ -35,5 +174,45 @@ h2 { color: #b71c1c; margin-bottom: 1rem; }
     padding: 0.15rem 0.5rem;
     border-radius: 999px;
     font-weight: 600;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+  
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .category-card {
+    padding: 1.5rem 1rem;
+    
+    .category-icon .icon {
+      font-size: 2.5rem;
+    }
+    
+    h3 {
+      font-size: 1.1rem;
+    }
   }
 }

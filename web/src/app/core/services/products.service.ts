@@ -16,7 +16,12 @@ export class ProductsService {
     const needsSeed = existing.length === 0 || existing.some(p => !p.sizes || p.sizes.length === 0 || !p.hasOwnProperty('customizable'));
     console.log('¿Necesita seed?', needsSeed);
     
-    if (!needsSeed) return;
+    // Forzar recarga para mostrar los nuevos productos
+    if (!needsSeed && existing.length < 10) {
+      console.log('Forzando recarga de productos para mostrar ejemplos completos');
+    }
+    
+    if (!needsSeed && existing.length >= 10) return;
 
     try {
       const products = await firstValueFrom(
@@ -42,5 +47,10 @@ export class ProductsService {
 
   getById(id: string): Product | undefined {
     return this.getAll().find(p => p.id === id);
+  }
+
+  clearStorage(): void {
+    this.storage.remove(LS.PRODUCTS);
+    console.log('Storage de productos limpiado');
   }
 }

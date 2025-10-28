@@ -1,22 +1,63 @@
 <section class="catalog">
-    <h2>Catálogo</h2>
-  
-    <div class="grid" *ngIf="products.length; else empty">
-      <a class="card" *ngFor="let p of products" [routerLink]="['/producto', p.id]">
-        <img
-          [src]="p.image"
-          [alt]="p.name"
-          loading="lazy"
-          (error)="onImgError($event)"  />
-        <h3>{{ p.name }}</h3>
-        <p class="price">
-          {{ priceForDefaultSize(p) | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}
-          <span class="size-tag">Tamaño: M</span>
-        </p>
-      </a>
+  <div class="container">
+    <div class="header">
+      <h1>Catálogo de Productos</h1>
+      <p class="subtitle">Explora nuestra colección de decoraciones navideñas artesanales</p>
     </div>
-  
-    <ng-template #empty>
-      <p>No hay productos cargados.</p>
-    </ng-template>
-  </section>
+
+    <!-- Category Selection -->
+    <div class="category-selection">
+      <h2>Selecciona una categoría</h2>
+      <div class="category-grid">
+        <button 
+          class="category-card all-products"
+          [class.active]="selectedCategory === ''"
+          (click)="onCategorySelect('')">
+          <div class="category-icon">
+            <span class="icon">🎁</span>
+          </div>
+          <h3>Todos los Productos</h3>
+          <p>Ver toda la colección</p>
+        </button>
+        
+        <button 
+          *ngFor="let category of categories" 
+          class="category-card"
+          [class.active]="selectedCategory === category.id"
+          (click)="onCategorySelect(category.id)">
+          <div class="category-icon">
+            <span class="icon">{{ category.icon }}</span>
+          </div>
+          <h3>{{ category.name }}</h3>
+          <p>{{ category.description }}</p>
+        </button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-section">
+      <h2>{{ getSelectedCategoryName() }}</h2>
+      
+      <div class="grid" *ngIf="filteredProducts.length; else empty">
+        <a class="card" *ngFor="let p of filteredProducts" [routerLink]="['/producto', p.id]">
+          <img
+            [src]="p.image"
+            [alt]="p.name"
+            loading="lazy"
+            (error)="onImgError($event)"  />
+          <h3>{{ p.name }}</h3>
+          <p class="price">
+            {{ priceForDefaultSize(p) | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}
+            <span class="size-tag">Tamaño: M</span>
+          </p>
+        </a>
+      </div>
+    
+      <ng-template #empty>
+        <div class="empty-state">
+          <p>No hay productos disponibles en esta categoría.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>

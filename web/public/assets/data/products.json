@@ -211,5 +211,289 @@
           ]
         }
       ]
+    },
+    {
+      "id": "p5",
+      "name": "Bola de cristal",
+      "description": "Bola navideña de cristal con acabado brillante.",
+      "price": 14000,
+      "image": "assets/img/images.jpeg",
+      "category": "bola",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 12000,
+          "description": "Bola S de cristal con brillo suave."
+        },
+        {
+          "size": "M",
+          "price": 14000,
+          "description": "Bola M de cristal con acabado premium."
+        },
+        {
+          "size": "L",
+          "price": 16000,
+          "description": "Bola L de cristal con detalles grabados."
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Bola vintage",
+      "description": "Bola navideña con estilo vintage y acabado envejecido.",
+      "price": 11000,
+      "image": "assets/img/images.jpeg",
+      "category": "bola",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 9500,
+          "description": "Bola S vintage con patina dorada."
+        },
+        {
+          "size": "M",
+          "price": 11000,
+          "description": "Bola M vintage con acabado envejecido."
+        },
+        {
+          "size": "L",
+          "price": 13000,
+          "description": "Bola L vintage con detalles artesanales."
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "name": "Moño clásico",
+      "description": "Moño decorativo clásico con cintas de seda.",
+      "price": 7500,
+      "image": "assets/img/images.jpeg",
+      "category": "moño",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 6500,
+          "description": "Moño S clásico con cintas finas."
+        },
+        {
+          "size": "M",
+          "price": 7500,
+          "description": "Moño M clásico con lazo perfecto."
+        },
+        {
+          "size": "L",
+          "price": 9000,
+          "description": "Moño L clásico con volumen elegante."
+        }
+      ]
+    },
+    {
+      "id": "p8",
+      "name": "Moño moderno",
+      "description": "Moño decorativo con diseño moderno y colores vibrantes.",
+      "price": 8500,
+      "image": "assets/img/images.jpeg",
+      "category": "moño",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 7200,
+          "description": "Moño S moderno con colores vibrantes."
+        },
+        {
+          "size": "M",
+          "price": 8500,
+          "description": "Moño M moderno con diseño contemporáneo."
+        },
+        {
+          "size": "L",
+          "price": 10000,
+          "description": "Moño L moderno con acabado brillante."
+        }
+      ]
+    },
+    {
+      "id": "p9",
+      "name": "Caja premium",
+      "description": "Caja de regalo premium con acabado de lujo.",
+      "price": 20000,
+      "image": "assets/img/images.jpeg",
+      "category": "caja",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 17000,
+          "description": "Caja S premium con detalles dorados."
+        },
+        {
+          "size": "M",
+          "price": 20000,
+          "description": "Caja M premium con acabado de lujo."
+        },
+        {
+          "size": "L",
+          "price": 24000,
+          "description": "Caja L premium con forro de terciopelo."
+        }
+      ]
+    },
+    {
+      "id": "p10",
+      "name": "Caja rústica",
+      "description": "Caja de regalo con estilo rústico y acabado natural.",
+      "price": 13000,
+      "image": "assets/img/images.jpeg",
+      "category": "caja",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 11000,
+          "description": "Caja S rústica con nudos de madera visibles."
+        },
+        {
+          "size": "M",
+          "price": 13000,
+          "description": "Caja M rústica con acabado natural."
+        },
+        {
+          "size": "L",
+          "price": 16000,
+          "description": "Caja L rústica con herrajes de metal."
+        }
+      ]
+    },
+    {
+      "id": "p11",
+      "name": "Tambor clásico",
+      "description": "Tambor decorativo con diseño clásico navideño.",
+      "price": 16000,
+      "image": "assets/img/images.jpeg",
+      "category": "tambor",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 13000,
+          "description": "Tambor S clásico con motivos navideños."
+        },
+        {
+          "size": "M",
+          "price": 16000,
+          "description": "Tambor M clásico con acabado tradicional."
+        },
+        {
+          "size": "L",
+          "price": 20000,
+          "description": "Tambor L clásico con detalles artesanales."
+        }
+      ]
+    },
+    {
+      "id": "p12",
+      "name": "Tambor moderno",
+      "description": "Tambor decorativo con diseño moderno y minimalista.",
+      "price": 19000,
+      "image": "assets/img/images.jpeg",
+      "category": "tambor",
+      "customizable": false,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 16000,
+          "description": "Tambor S moderno con líneas limpias."
+        },
+        {
+          "size": "M",
+          "price": 19000,
+          "description": "Tambor M moderno con acabado minimalista."
+        },
+        {
+          "size": "L",
+          "price": 23000,
+          "description": "Tambor L moderno con diseño contemporáneo."
+        }
+      ]
+    },
+    {
+      "id": "p13",
+      "name": "Bola artesanal",
+      "description": "Bola navideña completamente hecha a mano con técnicas tradicionales.",
+      "price": 16000,
+      "image": "assets/img/images.jpeg",
+      "category": "bola",
+      "customizable": true,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 14000,
+          "description": "Bola S artesanal con detalles únicos."
+        },
+        {
+          "size": "M",
+          "price": 16000,
+          "description": "Bola M artesanal con acabado tradicional."
+        },
+        {
+          "size": "L",
+          "price": 18500,
+          "description": "Bola L artesanal con patrones únicos."
+        }
+      ],
+      "customizationOptions": [
+        {
+          "id": "patron",
+          "name": "Patrón",
+          "required": true,
+          "options": [
+            { "id": "floral", "name": "Floral", "value": "floral", "price": 0 },
+            { "id": "geometrico", "name": "Geométrico", "value": "geometrico", "price": 2000 },
+            { "id": "navideño", "name": "Navideño", "value": "navideño", "price": 1500 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p14",
+      "name": "Moño elegante",
+      "description": "Moño decorativo con diseño elegante y sofisticado.",
+      "price": 9500,
+      "image": "assets/img/images.jpeg",
+      "category": "moño",
+      "customizable": true,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 8000,
+          "description": "Moño S elegante con cintas de seda."
+        },
+        {
+          "size": "M",
+          "price": 9500,
+          "description": "Moño M elegante con acabado sofisticado."
+        },
+        {
+          "size": "L",
+          "price": 11500,
+          "description": "Moño L elegante con detalles de lujo."
+        }
+      ],
+      "customizationOptions": [
+        {
+          "id": "material",
+          "name": "Material",
+          "required": true,
+          "options": [
+            { "id": "seda", "name": "Seda", "value": "seda", "price": 0 },
+            { "id": "terciopelo", "name": "Terciopelo", "value": "terciopelo", "price": 1500 },
+            { "id": "organza", "name": "Organza", "value": "organza", "price": 1000 }
+          ]
+        }
+      ]
     }
   ]
