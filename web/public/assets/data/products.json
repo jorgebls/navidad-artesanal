@@ -1,78 +1,123 @@
 [
     {
       "id": "p1",
-      "name": "Bolita roja clásica",
-      "description": "Bolita navideña artesanal en color rojo brillante.",
+      "name": "Bolita navideña",
+      "description": "Bolita navideña artesanal personalizable.",
       "price": 12000,
       "image": "assets/img/images.jpeg",
+      "category": "bola",
+      "customizable": true,
       "sizes": [
         {
           "size": "XS",
           "price": 9000,
-          "description": "Bolita roja XS para centros de mesa y mini arbolitos."
+          "description": "Bolita XS para centros de mesa y mini arbolitos."
         },
         {
           "size": "S",
           "price": 10500,
-          "description": "Bolita roja S con brillo suave para detalles delicados."
+          "description": "Bolita S con brillo suave para detalles delicados."
         },
         {
           "size": "M",
           "price": 12000,
-          "description": "Bolita roja M con acabado brillante, tamaño clásico."
+          "description": "Bolita M con acabado brillante, tamaño clásico."
         },
         {
           "size": "L",
           "price": 13500,
-          "description": "Bolita roja L para destacar en el árbol."
+          "description": "Bolita L para destacar en el árbol."
         },
         {
           "size": "XL",
           "price": 15500,
-          "description": "Bolita roja XL para decoraciones llamativas."
+          "description": "Bolita XL para decoraciones llamativas."
+        }
+      ],
+      "customizationOptions": [
+        {
+          "id": "color",
+          "name": "Color",
+          "required": true,
+          "options": [
+            { "id": "rojo", "name": "Rojo", "value": "rojo", "price": 0 },
+            { "id": "dorado", "name": "Dorado", "value": "dorado", "price": 2000 },
+            { "id": "plateado", "name": "Plateado", "value": "plateado", "price": 2000 },
+            { "id": "verde", "name": "Verde", "value": "verde", "price": 0 },
+            { "id": "azul", "name": "Azul", "value": "azul", "price": 0 }
+          ]
+        },
+        {
+          "id": "tela",
+          "name": "Tipo de Tela",
+          "required": true,
+          "options": [
+            { "id": "seda", "name": "Seda", "value": "seda", "price": 3000 },
+            { "id": "terciopelo", "name": "Terciopelo", "value": "terciopelo", "price": 2500 },
+            { "id": "lino", "name": "Lino", "value": "lino", "price": 1000 },
+            { "id": "algodon", "name": "Algodón", "value": "algodon", "price": 0 }
+          ]
         }
       ]
     },
     {
       "id": "p2",
-      "name": "Moño dorado festivo",
-      "description": "Moño decorativo artesanal en tono dorado.",
+      "name": "Moño decorativo",
+      "description": "Moño decorativo artesanal personalizable.",
       "price": 8000,
       "image": "assets/img/images.jpeg",
+      "category": "moño",
+      "customizable": true,
       "sizes": [
         {
           "size": "XS",
           "price": 6500,
-          "description": "Moño dorado XS para regalos pequeños."
+          "description": "Moño XS para regalos pequeños."
         },
         {
           "size": "S",
           "price": 7200,
-          "description": "Moño dorado S con cintas finas brillantes."
+          "description": "Moño S con cintas finas brillantes."
         },
         {
           "size": "M",
           "price": 8000,
-          "description": "Moño dorado M ideal para coronas y obsequios medianos."
+          "description": "Moño M ideal para coronas y obsequios medianos."
         },
         {
           "size": "L",
           "price": 9200,
-          "description": "Moño dorado L con lazada volumétrica."
+          "description": "Moño L con lazada volumétrica."
         },
         {
           "size": "XL",
           "price": 10500,
-          "description": "Moño dorado XL para decoraciones principales."
+          "description": "Moño XL para decoraciones principales."
+        }
+      ],
+      "customizationOptions": [
+        {
+          "id": "color",
+          "name": "Color",
+          "required": true,
+          "options": [
+            { "id": "dorado", "name": "Dorado", "value": "dorado", "price": 0 },
+            { "id": "rojo", "name": "Rojo", "value": "rojo", "price": 0 },
+            { "id": "verde", "name": "Verde", "value": "verde", "price": 0 },
+            { "id": "plateado", "name": "Plateado", "value": "plateado", "price": 1500 },
+            { "id": "azul", "name": "Azul", "value": "azul", "price": 0 }
+          ]
         }
       ]
     },
     {
       "id": "p3",
-      "name": "Caja navideña pequeña",
-      "description": "Caja artesanal para regalos navideños.",
+      "name": "Caja navideña",
+      "description": "Caja artesanal para regalos navideños personalizable.",
       "price": 15000,
       "image": "assets/img/images.jpeg",
+      "category": "caja",
+      "customizable": true,
       "sizes": [
         {
           "size": "XS",
@@ -98,6 +143,72 @@
           "size": "XL",
           "price": 19500,
           "description": "Caja XL con compartimentos internos."
+        }
+      ],
+      "customizationOptions": [
+        {
+          "id": "color",
+          "name": "Color",
+          "required": true,
+          "options": [
+            { "id": "natural", "name": "Natural", "value": "natural", "price": 0 },
+            { "id": "rojo", "name": "Rojo", "value": "rojo", "price": 2000 },
+            { "id": "verde", "name": "Verde", "value": "verde", "price": 2000 },
+            { "id": "dorado", "name": "Dorado", "value": "dorado", "price": 3000 }
+          ]
+        },
+        {
+          "id": "acabado",
+          "name": "Acabado",
+          "required": true,
+          "options": [
+            { "id": "mate", "name": "Mate", "value": "mate", "price": 0 },
+            { "id": "brillante", "name": "Brillante", "value": "brillante", "price": 1500 },
+            { "id": "texturizado", "name": "Texturizado", "value": "texturizado", "price": 2000 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Tambor navideño",
+      "description": "Tambor decorativo artesanal personalizable.",
+      "price": 18000,
+      "image": "assets/img/images.jpeg",
+      "category": "tambor",
+      "customizable": true,
+      "sizes": [
+        {
+          "size": "S",
+          "price": 15000,
+          "description": "Tambor S para decoraciones de mesa."
+        },
+        {
+          "size": "M",
+          "price": 18000,
+          "description": "Tambor M tamaño estándar para exhibición."
+        },
+        {
+          "size": "L",
+          "price": 22000,
+          "description": "Tambor L para decoraciones principales."
+        },
+        {
+          "size": "XL",
+          "price": 28000,
+          "description": "Tambor XL para espacios amplios."
+        }
+      ],
+      "customizationOptions": [
+        {
+          "id": "tamaño",
+          "name": "Tamaño",
+          "required": true,
+          "options": [
+            { "id": "pequeño", "name": "Pequeño", "value": "pequeño", "price": 0 },
+            { "id": "mediano", "name": "Mediano", "value": "mediano", "price": 2000 },
+            { "id": "grande", "name": "Grande", "value": "grande", "price": 4000 }
+          ]
         }
       ]
     }

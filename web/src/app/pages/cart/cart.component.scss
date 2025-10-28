@@ -72,33 +72,63 @@
       }
     }
 
-    .item-details {
-      .item-name {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 0 0 0.5rem 0;
-      }
+      .item-details {
+        .item-name {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: #2c3e50;
+          margin: 0 0 0.5rem 0;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
 
-      .item-description {
-        color: #7f8c8d;
-        margin: 0 0 1rem 0;
-        line-height: 1.4;
-      }
+          .customized-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+          }
+        }
 
-      .item-price {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #27ae60;
-      }
+        .item-description {
+          color: #7f8c8d;
+          margin: 0 0 1rem 0;
+          line-height: 1.4;
+        }
 
-      .item-size {
-        margin-top: 0.4rem;
-        font-size: 0.95rem;
-        color: #34495e;
-        font-weight: 500;
+        .item-customizations {
+          margin: 0.5rem 0;
+          
+          .customization-details {
+            background: #f8f9fa;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            margin: 0;
+            font-style: italic;
+          }
+        }
+
+        .item-price {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #27ae60;
+        }
+
+        .item-size {
+          margin-top: 0.4rem;
+          font-size: 0.95rem;
+          color: #34495e;
+          font-weight: 500;
+        }
       }
-    }
 
     .item-controls {
       display: flex;

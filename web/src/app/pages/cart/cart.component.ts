@@ -16,7 +16,10 @@ export class CartComponent {
 
   private readonly itemsSignal = this.cartService.items;
   private readonly totalSignal = computed(() =>
-    this.itemsSignal().reduce((acc, item) => acc + item.product.price * item.qty, 0)
+    this.itemsSignal().reduce((acc, item) => {
+      const unitPrice = item.unitPrice || item.product.price;
+      return acc + (unitPrice * item.qty);
+    }, 0)
   );
   private readonly countSignal = computed(() =>
     this.itemsSignal().reduce((acc, item) => acc + item.qty, 0)
@@ -87,6 +90,32 @@ export class CartComponent {
   }
 
   trackByProductId(index: number, item: CartItem): string {
-    return `${item.product.id}-${item.size}`;
+    const customizationsKey = item.customizations ? JSON.stringify(item.customizations) : '';
+    return `${item.product.id}-${item.size}-${customizationsKey}`;
+  }
+
+  getItemUnitPrice(item: CartItem): number {
+    return item.unitPrice || item.product.price;
+  }
+
+  getItemTotalPrice(item: CartItem): number {
+    return this.getItemUnitPrice(item) * item.qty;
+  }
+
+  getCustomizationDescription(item: CartItem): string {
+    if (!item.isCustomized || !item.customizations) {
+      return '';
+    }
+
+    const descriptions: string[] = [];
+    Object.entries(item.customizations).forEach(([categoryId, optionId]) => {
+      const category = item.product.customizationOptions?.find(c => c.id === categoryId);
+      const option = category?.options.find(o => o.id === optionId);
+      if (option) {
+        descriptions.push(`${category?.name}: ${option.name}`);
+      }
+    });
+
+    return descriptions.join(', ');
   }
 }

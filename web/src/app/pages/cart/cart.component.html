@@ -15,9 +15,15 @@
         </div>
         
         <div class="item-details">
-          <h3 class="item-name">{{ item.product.name }}</h3>
+          <h3 class="item-name">
+            {{ item.product.name }}
+            <span class="customized-badge" *ngIf="item.isCustomized">✨ Personalizado</span>
+          </h3>
           <p class="item-description">{{ item.product.description }}</p>
-          <div class="item-price">{{ formatPrice(item.product.price) }}</div>
+          <div class="item-customizations" *ngIf="item.isCustomized && getCustomizationDescription(item)">
+            <p class="customization-details">{{ getCustomizationDescription(item) }}</p>
+          </div>
+          <div class="item-price">{{ formatPrice(getItemUnitPrice(item)) }}</div>
           <div class="item-size">Talla: {{ item.size }}</div>
         </div>
         
@@ -36,7 +42,7 @@
           </div>
           
           <div class="item-total">
-            <strong>{{ formatPrice(item.product.price * item.qty) }}</strong>
+            <strong>{{ formatPrice(getItemTotalPrice(item)) }}</strong>
           </div>
           
           <button 

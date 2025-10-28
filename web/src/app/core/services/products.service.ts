@@ -12,13 +12,21 @@ export class ProductsService {
 
   async seedIfEmpty() {
     const existing = this.storage.get<Product[]>(LS.PRODUCTS, []);
-    const needsSeed = existing.length === 0 || existing.some(p => !p.sizes || p.sizes.length === 0);
+    console.log('Productos existentes en storage:', existing);
+    const needsSeed = existing.length === 0 || existing.some(p => !p.sizes || p.sizes.length === 0 || !p.hasOwnProperty('customizable'));
+    console.log('¿Necesita seed?', needsSeed);
+    
     if (!needsSeed) return;
 
-    const products = await firstValueFrom(
-      this.http.get<Product[]>('assets/data/products.json')
-    );
-    this.storage.set(LS.PRODUCTS, products);
+    try {
+      const products = await firstValueFrom(
+        this.http.get<Product[]>('assets/data/products.json')
+      );
+      console.log('Productos cargados desde JSON:', products);
+      this.storage.set(LS.PRODUCTS, products);
+    } catch (error) {
+      console.error('Error cargando productos:', error);
+    }
   }
 
   getAll(): Product[] {

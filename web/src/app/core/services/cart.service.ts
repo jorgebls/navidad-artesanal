@@ -1,12 +1,15 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { StorageService } from './storage.service';
 import { LS } from './keys';
-import { Product } from '../../shared/models/product.model';
+import { Product, CustomizedProduct } from '../../shared/models/product.model';
 
 export interface CartItem {
   product: Product;
   qty: number;
   size: string;
+  customizations?: { [categoryId: string]: string };
+  unitPrice?: number;
+  isCustomized?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -50,20 +53,53 @@ export class CartService {
   }
 
   total(): number {
-    return this.itemsValue.reduce((acc, item) => acc + (item.product.price * item.qty), 0);
+    return this.itemsValue.reduce((acc, item) => {
+      const unitPrice = item.unitPrice || item.product.price;
+      return acc + (unitPrice * item.qty);
+    }, 0);
   }
 
   add(product: Product, qty = 1, size = 'M'): void {
     const normalizedSize = size.toUpperCase();
     const items = [...this.itemsValue];
     const productSnapshot: Product = { ...product };
-    const existing = items.find(i => i.product.id === product.id && i.size === normalizedSize);
+    const existing = items.find(i => i.product.id === product.id && i.size === normalizedSize && !i.isCustomized);
 
     if (existing) {
       existing.qty += qty;
       existing.product = productSnapshot;
     } else {
       items.push({ product: productSnapshot, qty, size: normalizedSize });
+    }
+
+    this.itemsValue = items;
+  }
+
+  addCustomized(customizedProduct: CustomizedProduct): void {
+    const items = [...this.itemsValue];
+    const productSnapshot: Product = { ...customizedProduct.baseProduct };
+    
+    // Create a unique identifier for customized products
+    const customizationsKey = JSON.stringify(customizedProduct.customizations);
+    const existing = items.find(i => 
+      i.product.id === customizedProduct.productId && 
+      i.size === customizedProduct.selectedSize && 
+      i.isCustomized &&
+      JSON.stringify(i.customizations) === customizationsKey
+    );
+
+    if (existing) {
+      existing.qty += customizedProduct.quantity;
+    } else {
+      const unitPrice = customizedProduct.totalPrice / customizedProduct.quantity;
+      items.push({ 
+        product: productSnapshot, 
+        qty: customizedProduct.quantity, 
+        size: customizedProduct.selectedSize,
+        customizations: { ...customizedProduct.customizations },
+        unitPrice: unitPrice,
+        isCustomized: true
+      });
     }
 
     this.itemsValue = items;
