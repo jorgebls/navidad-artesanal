@@ -1,6 +1,19 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, RelationId } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+  RelationId,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Photo } from '../photo/photo.entity';
 import { Category } from '../category/category.entity';
+import { Design } from '../design/design.entity';
+import { Fabric } from '../fabric/fabric.entity';
 
 @Entity()
 export class Product {
@@ -34,6 +47,22 @@ export class Product {
 
   @OneToMany(() => Photo, (photo) => photo.product, { cascade: false })
   photos: Photo[];
+
+  @ManyToMany(() => Design, (design) => design.products, { cascade: false })
+  @JoinTable({
+    name: 'product_designs',
+    joinColumn: { name: 'productId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'designId', referencedColumnName: 'id' },
+  })
+  designs: Design[];
+
+  @ManyToMany(() => Fabric, (fabric) => fabric.products, { cascade: false })
+  @JoinTable({
+    name: 'product_fabrics',
+    joinColumn: { name: 'productId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'fabricId', referencedColumnName: 'id' },
+  })
+  fabrics: Fabric[];
 
   @Column({ type: 'text', nullable: true }) 
   coverPath: string | null;

@@ -17,19 +17,17 @@
             <span class="icon">🎁</span>
           </div>
           <h3>Todos los Productos</h3>
-          <p>Ver toda la colección</p>
         </button>
         
         <button 
           *ngFor="let category of categories" 
           class="category-card"
-          [class.active]="selectedCategory === category.id"
-          (click)="onCategorySelect(category.id)">
+          [class.active]="selectedCategory === category.slug"
+          (click)="onCategorySelect(category.slug)">
           <div class="category-icon">
             <span class="icon">{{ category.icon }}</span>
           </div>
           <h3>{{ category.name }}</h3>
-          <p>{{ category.description }}</p>
         </button>
       </div>
     </div>
@@ -41,7 +39,7 @@
       <div class="grid" *ngIf="filteredProducts.length; else empty">
         <a class="card" *ngFor="let p of filteredProducts" [routerLink]="['/producto', p.id]">
           <img
-            [src]="p.image"
+            [src]="p.coverUrl || p.image || 'assets/img/images.jpeg'"
             [alt]="p.name"
             loading="lazy"
             (error)="onImgError($event)"  />

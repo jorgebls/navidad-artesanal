@@ -9,30 +9,54 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class CustomizationService {
   public productsService = inject(ProductsService);
   private currentCustomization = new BehaviorSubject<CustomizedProduct | null>(null);
+  private customizableProducts = new BehaviorSubject<Product[]>([]);
+  private loadingPromise: Promise<Product[]> | null = null;
 
   getCurrentCustomization(): Observable<CustomizedProduct | null> {
     return this.currentCustomization.asObservable();
   }
 
+  async ensureCustomizableProducts(force = false): Promise<Product[]> {
+    if (!force && this.customizableProducts.value.length > 0) {
+      return this.customizableProducts.value;
+    }
+
+    if (this.loadingPromise) {
+      return this.loadingPromise;
+    }
+
+    this.loadingPromise = (async () => {
+      try {
+        const { data } = await this.productsService.list({ customizable: true, limit: 100 });
+        this.customizableProducts.next(data);
+        return data;
+      } catch (error) {
+        console.error('Error cargando productos personalizables', error);
+        this.customizableProducts.next([]);
+        return [];
+      } finally {
+        this.loadingPromise = null;
+      }
+    })();
+
+    return this.loadingPromise;
+  }
+
   getCustomizableProducts(): Product[] {
-    const allProducts = this.productsService.getAll();
-    console.log('Todos los productos:', allProducts);
-    const customizableProducts = allProducts.filter(product => product.customizable);
-    console.log('Productos personalizables:', customizableProducts);
-    return customizableProducts;
+    return this.customizableProducts.value;
   }
 
   getProductCategories(): string[] {
-    const products = this.getCustomizableProducts();
-    return [...new Set(products.map(p => p.category))];
+    const products = this.customizableProducts.value;
+    return [...new Set(products.map(p => this.getCategorySlug(p)).filter(Boolean) as string[])];
   }
 
   getProductsByCategory(category: string): Product[] {
-    return this.getCustomizableProducts().filter(product => product.category === category);
+    return this.customizableProducts.value.filter(product => this.getCategorySlug(product) === category);
   }
 
-  startCustomization(productId: string): CustomizedProduct | null {
-    const product = this.productsService.getById(productId);
+  async startCustomization(productId: string): Promise<CustomizedProduct | null> {
+    const product = await this.productsService.getById(productId);
     if (!product || !product.customizable) {
       return null;
     }
@@ -137,5 +161,10 @@ export class CustomizationService {
     // Here you would typically add to cart service
     // For now, we'll just return the customized product
     return current;
+  }
+
+  private getCategorySlug(product: Product): string | null {
+    if (!product.category) return null;
+    return typeof product.category === 'string' ? product.category : product.category.slug;
   }
 }

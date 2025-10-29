@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CustomizationService } from '../../core/services/customization.service';
 import { CartService } from '../../core/services/cart.service';
-import { Product, CustomizedProduct, CustomizationCategory } from '../../shared/models/product.model';
+import { Product, CustomizedProduct } from '../../shared/models/product.model';
 
 @Component({
   selector: 'app-customize',
@@ -48,7 +48,7 @@ export class CustomizeComponent implements OnInit, OnDestroy {
   private async loadData(): Promise<void> {
     try {
       // Asegurar que los datos estén cargados
-      await this.customizationService.productsService.seedIfEmpty();
+      await this.customizationService.ensureCustomizableProducts();
       
       this.categories = this.customizationService.getProductCategories();
       console.log('Categorías encontradas:', this.categories);
@@ -129,9 +129,9 @@ export class CustomizeComponent implements OnInit, OnDestroy {
     this.customizationService.resetCustomization();
   }
 
-  onProductSelect(product: Product): void {
+  async onProductSelect(product: Product): Promise<void> {
     this.selectedProduct = product;
-    this.customizationService.startCustomization(product.id);
+    await this.customizationService.startCustomization(product.id);
   }
 
   onSizeChange(size: string): void {

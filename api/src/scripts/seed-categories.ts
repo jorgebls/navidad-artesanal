@@ -49,16 +49,25 @@ async function bootstrap() {
 
     for (const seed of CATEGORY_SEEDS) {
       console.log(`Procesando categoría base "${seed.name}"...`);
-      let category = await categoryRepo.findOne({ where: { name: seed.name } });
+      const slug = seed.key.toLowerCase();
+      let category = await categoryRepo.findOne({
+        where: [{ slug }, { name: seed.name }],
+      });
       if (!category) {
         console.log(`Creando categoría "${seed.name}"`);
         category = categoryRepo.create({
           name: seed.name,
+          slug,
           description: seed.description,
         });
         category = await categoryRepo.save(category);
+      } else if (!category.slug) {
+        category.slug = slug;
+        category.name = seed.name;
+        category.description = seed.description;
+        category = await categoryRepo.save(category);
       }
-      categoryMap.set(seed.key, category);
+      categoryMap.set(slug, category);
     }
 
     const products = await productRepo.find();

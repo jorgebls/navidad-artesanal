@@ -25,11 +25,13 @@ export class ProductDetailComponent implements OnInit {
   private readonly defaultSize = 'M';
 
   async ngOnInit() {
-    await this.products.seedIfEmpty();
     const id = this.route.snapshot.paramMap.get('id')!;
-    this.product = this.products.getById(id);
-    this.selectedSize = this.resolveInitialSize();
-    this.syncCartState();
+    this.product = await this.products.getById(id);
+
+    if (this.product) {
+      this.selectedSize = this.resolveInitialSize();
+      this.syncCartState();
+    }
   }
 
   addToCart(): void {
@@ -40,7 +42,7 @@ export class ProductDetailComponent implements OnInit {
       ...this.product,
       price: variant?.price ?? this.product.price,
       description: variant?.description ?? this.product.description,
-      image: variant?.image ?? this.product.image
+      image: variant?.image ?? this.product.coverUrl ?? this.product.image
     };
 
     this.cartService.add(productSnapshot, this.quantity, this.selectedSize);
@@ -123,6 +125,7 @@ export class ProductDetailComponent implements OnInit {
 
   get currentImage(): string {
     if (this.selectedVariant?.image) return this.selectedVariant.image;
+    if (this.product?.coverUrl) return this.product.coverUrl;
     return this.product?.image ?? '';
   }
 

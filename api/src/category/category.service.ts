@@ -21,14 +21,20 @@ export class CategoryService {
   }
 
   async create(dto: CreateCategoryDto) {
-    const category = this.repo.create(dto);
+    const category = this.repo.create({
+      ...dto,
+      slug: dto.slug.toLowerCase(),
+    });
     return this.repo.save(category);
   }
 
   async update(id: number, dto: UpdateCategoryDto) {
     const category = await this.repo.findOne({ where: { id } });
     if (!category) throw new NotFoundException('Categoría no encontrada');
-    Object.assign(category, dto);
+    Object.assign(category, {
+      ...dto,
+      ...(dto.slug ? { slug: dto.slug.toLowerCase() } : {}),
+    });
     return this.repo.save(category);
   }
 

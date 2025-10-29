@@ -3,7 +3,6 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { SnowEffectComponent } from './shared/components/snow-effect/snow-effect.component';
-import { ProductsService } from './core/services/products.service';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +27,5 @@ import { ProductsService } from './core/services/products.service';
   `]
 })
 export class AppComponent {
-  constructor(private products: ProductsService) {
-    this.products.seedIfEmpty();
-  }
+  constructor() {}
 }

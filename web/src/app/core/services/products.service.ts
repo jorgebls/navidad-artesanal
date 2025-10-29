@@ -1,56 +1,146 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Product } from '../../shared/models/product.model';
-import { StorageService } from './storage.service';
-import { LS } from './keys';
 import { firstValueFrom } from 'rxjs';
+import { Product } from '../../shared/models/product.model';
+
+export interface ProductQueryParams {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sort?: string;
+  sortBy?: 'createdAt' | 'name' | 'basePrice' | 'stock';
+  sortOrder?: 'ASC' | 'DESC';
+  categoryId?: number;
+  customizable?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export interface ProductListResponse {
+  data: Product[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+}
+
+type RawProduct = Record<string, any>;
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
   private http = inject(HttpClient);
-  private storage = inject(StorageService);
+  private readonly baseUrl = '/api/product';
 
-  async seedIfEmpty() {
-    const existing = this.storage.get<Product[]>(LS.PRODUCTS, []);
-    console.log('Productos existentes en storage:', existing);
-    const needsSeed = existing.length === 0 || existing.some(p => !p.sizes || p.sizes.length === 0 || !p.hasOwnProperty('customizable'));
-    console.log('¿Necesita seed?', needsSeed);
-    
-    // Forzar recarga para mostrar los nuevos productos
-    if (!needsSeed && existing.length < 10) {
-      console.log('Forzando recarga de productos para mostrar ejemplos completos');
-    }
-    
-    if (!needsSeed && existing.length >= 10) return;
+  private cache = new Map<string, Product>();
+  private lastList: Product[] = [];
 
-    try {
-      const products = await firstValueFrom(
-        this.http.get<Product[]>('assets/data/products.json')
-      );
-      console.log('Productos cargados desde JSON:', products);
-      this.storage.set(LS.PRODUCTS, products);
-    } catch (error) {
-      console.error('Error cargando productos:', error);
-    }
+  async list(params: ProductQueryParams = {}): Promise<ProductListResponse> {
+    const normalized: ProductQueryParams = { limit: params.limit ?? 50, ...params };
+    const httpParams = this.toHttpParams(normalized);
+    const response = await firstValueFrom(
+      this.http.get<{ data: RawProduct[]; pagination: ProductListResponse['pagination'] }>(this.baseUrl, {
+        params: httpParams,
+      }),
+    );
+
+    const data = response.data.map((raw) => this.normalizeProduct(raw));
+    data.forEach((product) => this.cache.set(product.id, product));
+    this.lastList = data;
+
+    return { data, pagination: response.pagination };
   }
 
-  getAll(): Product[] {
-    const products = this.storage.get<Product[]>(LS.PRODUCTS, []);
-    return products.map(p => ({
-      ...p,
-      sizes: p.sizes?.map(variant => ({
-        ...variant,
-        size: variant.size.toUpperCase()
-      }))
+  async getById(id: string): Promise<Product | undefined> {
+    if (this.cache.has(id)) {
+      return this.cache.get(id);
+    }
+
+    const raw = await firstValueFrom(this.http.get<RawProduct>(`${this.baseUrl}/${id}`));
+    const product = this.normalizeProduct(raw);
+    this.cache.set(product.id, product);
+    return product;
+  }
+
+  getCachedList(): Product[] {
+    return [...this.lastList];
+  }
+
+  private toHttpParams(params: ProductQueryParams): HttpParams {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '') return;
+      httpParams = httpParams.set(key, String(value));
+    });
+    return httpParams;
+  }
+
+  private normalizeProduct(raw: RawProduct): Product {
+    const basePrice = raw['basePrice'] !== undefined ? Number(raw['basePrice']) : raw['price'] ?? 0;
+    const coverUrl = raw['coverUrl'] ?? raw['image'] ?? null;
+    const categoryRaw = raw['category'];
+    const categoryId =
+      raw['categoryId'] ??
+      (typeof categoryRaw === 'object' && categoryRaw
+        ? categoryRaw.id
+        : undefined) ??
+      null;
+
+    const mappedCategory =
+      categoryRaw && typeof categoryRaw === 'object'
+        ? {
+            id: Number(categoryRaw.id),
+            slug: ((categoryRaw.slug ?? categoryRaw.name ?? '') as string).toLowerCase(),
+            name: categoryRaw.name ?? '',
+            description: categoryRaw.description ?? null,
+          }
+        : undefined;
+
+    const sanitizeColor = (value?: string | null) =>
+      value ? `#${value.replace('#', '').toUpperCase()}` : undefined;
+
+    const designs = (raw['designs'] ?? []).map((design: any) => ({
+      id: Number(design.id),
+      name: design.name ?? '',
+      description: design.description ?? null,
+      colorHex: sanitizeColor(design.colorHex) ?? null,
+      imageUrl: design.imageUrl ?? null,
+      extraCost: Number(design.extraCost ?? 0),
+      categoryId: design.categoryId ?? null,
     }));
-  }
 
-  getById(id: string): Product | undefined {
-    return this.getAll().find(p => p.id === id);
-  }
+    const fabrics = (raw['fabrics'] ?? []).map((fabric: any) => ({
+      id: Number(fabric.id),
+      name: fabric.name ?? '',
+      type: fabric.type ?? null,
+      description: fabric.description ?? null,
+      colorHex: sanitizeColor(fabric.colorHex) ?? null,
+      extraCost: Number(fabric.extraCost ?? 0),
+    }));
 
-  clearStorage(): void {
-    this.storage.remove(LS.PRODUCTS);
-    console.log('Storage de productos limpiado');
+    return {
+      id: String(raw['id']),
+      name: raw['name'] ?? '',
+      description: raw['description'] ?? '',
+      price: basePrice,
+      basePrice,
+      image: coverUrl ?? '',
+      coverUrl,
+      stock: raw['stock'] ?? 0,
+      customizable: Boolean(raw['customizable']),
+      category: mappedCategory,
+      categoryId,
+      sizes: (raw['sizes'] ?? []).map((variant: any) => ({
+        ...variant,
+        size: String(variant.size ?? '').toUpperCase(),
+      })),
+      customizationOptions: raw['customizationOptions'] ?? [],
+      createdAt: raw['createdAt'] ?? null,
+      designs,
+      fabrics,
+    };
   }
 }

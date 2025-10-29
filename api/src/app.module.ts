@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
 import { PhotoModule } from './photo/photo.module';
 import { CategoryModule } from './category/category.module';
+import { DesignModule } from './design/design.module';
+import { FabricModule } from './fabric/fabric.module';
 
 
 @Module({
@@ -39,6 +41,10 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
 
     CategoryModule,
+
+    DesignModule,
+
+    FabricModule,
 
     ProductModule,
 

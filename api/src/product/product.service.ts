@@ -61,8 +61,11 @@ export class ProductService {
     const qb = this.repo
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.designs', 'design')
+      .leftJoinAndSelect('product.fabrics', 'fabric')
       .skip((page - 1) * limit)
-      .take(limit);
+      .take(limit)
+      .distinct(true);
 
     if (search) {
       qb.andWhere(
@@ -109,13 +112,7 @@ export class ProductService {
     const [items, total] = await qb.getManyAndCount();
 
     // Procesar URLs de imágenes
-    const processedItems = await Promise.all(
-      items.map(async (p) => {
-        const coverUrl = await this.signCover(p);
-        const { coverPath, ...rest } = p as any;
-        return { ...rest, coverUrl };
-      }),
-    );
+    const processedItems = await Promise.all(items.map((p) => this.mapProduct(p)));
 
     // Calcular metadatos de paginación
     const totalPages = Math.ceil(total / limit);
@@ -138,12 +135,10 @@ export class ProductService {
   async findOne(id: string) {
     const p = await this.repo.findOne({
       where: { id },
-      relations: { category: true },
+      relations: { category: true, designs: true, fabrics: true },
     });
     if (!p) throw new NotFoundException('Producto no encontrado');
-    const coverUrl = await this.signCover(p);
-    const { coverPath, ...rest } = p as any;
-    return { ...rest, coverUrl };
+    return this.mapProduct(p);
   }
 
   async create(dto: CreateProductDto) {
@@ -187,5 +182,50 @@ export class ProductService {
     if (!p) throw new NotFoundException('Producto no encontrado');
     await this.repo.remove(p);
     return { ok: true };
+  }
+
+  private async mapProduct(p: Product) {
+    const coverUrl = await this.signCover(p);
+    const { coverPath, designs = [], fabrics = [], ...rest } = p as any;
+    const { category, ...restProduct } = rest;
+
+    const sanitizeColor = (hex?: string | null) =>
+      hex ? `#${hex.replace('#', '').toUpperCase()}` : null;
+
+    const mappedCategory = category
+      ? {
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+          description: category.description ?? null,
+        }
+      : null;
+
+    const mappedDesigns = (designs as any[]).map((design) => {
+      const { products: _omit, extraCost, colorHex, ...designRest } = design;
+      return {
+        ...designRest,
+        extraCost: Number(extraCost ?? 0),
+        colorHex: sanitizeColor(colorHex),
+      };
+    });
+
+    const mappedFabrics = (fabrics as any[]).map((fabric) => {
+      const { products: _omit, extraCost, colorHex, ...fabricRest } = fabric;
+      return {
+        ...fabricRest,
+        extraCost: Number(extraCost ?? 0),
+        colorHex: sanitizeColor(colorHex),
+      };
+    });
+
+    return {
+      ...restProduct,
+      category: mappedCategory,
+      categoryId: restProduct.categoryId ?? mappedCategory?.id ?? null,
+      designs: mappedDesigns,
+      fabrics: mappedFabrics,
+      coverUrl,
+    };
   }
 }

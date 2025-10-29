@@ -1,8 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ProductsService } from '../../core/services/products.service';
+import { ProductsService, ProductListResponse, ProductQueryParams } from '../../core/services/products.service';
 import { Product } from '../../shared/models/product.model';
+import { CategoryService, Category } from '../../core/services/category.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-catalog',
@@ -13,46 +15,42 @@ import { Product } from '../../shared/models/product.model';
 })
 export class CatalogComponent implements OnInit {
   private svc = inject(ProductsService);
+  private categorySvc = inject(CategoryService);
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  categories: Array<Category & { icon: string }> = [];
   selectedCategory: string = '';
   private readonly defaultSize = 'M';
+  loading = false;
 
-  // Definir las 4 categorías principales
-  categories = [
-    { id: 'bola', name: 'Bolas', icon: '🔴', description: 'Bolas navideñas artesanales' },
-    { id: 'moño', name: 'Moños', icon: '🎀', description: 'Moños decorativos únicos' },
-    { id: 'caja', name: 'Cajas', icon: '📦', description: 'Cajas regalo personalizadas' },
-    { id: 'tambor', name: 'Tambores', icon: '🥁', description: 'Tambores decorativos especiales' }
-  ];
+  private readonly categoryMeta: Record<string, { icon: string; name?: string; description?: string }> = {
+    bola: { icon: '🔴', name: 'Bolas navideñas', description: 'Bolas navideñas artesanales' },
+    'moño': { icon: '🎀', name: 'Moños', description: 'Moños decorativos únicos' },
+    caja: { icon: '📦', name: 'Cajas decorativas', description: 'Cajas regalo personalizadas' },
+    tambor: { icon: '🥁', name: 'Tambores', description: 'Tambores decorativos especiales' },
+  };
 
   async ngOnInit() {
-    // Limpiar storage para forzar recarga de productos
-    this.svc.clearStorage();
-    
-    await this.svc.seedIfEmpty();    
-    this.products = this.svc.getAll();
-    console.log('products:', this.products);
-    
-    // Mostrar todos los productos por defecto
-    this.filteredProducts = this.products;
+    await this.loadCategories();
+    await this.loadProducts();
   }
 
-  onCategorySelect(categoryId: string): void {
+  async onCategorySelect(categoryId: string): Promise<void> {
     this.selectedCategory = categoryId;
-    if (categoryId === '') {
-      // Mostrar todos los productos
-      this.filteredProducts = this.products;
-    } else {
-      // Filtrar productos por categoría
-      this.filteredProducts = this.products.filter(product => 
-        product.category?.toLowerCase() === categoryId.toLowerCase()
-      );
+    const params: ProductQueryParams = {};
+
+    if (categoryId) {
+      const category = this.categories.find((c) => c.slug === categoryId);
+      if (category) {
+        params.categoryId = category.id;
+      }
     }
+
+    await this.loadProducts(params);
   }
 
   onImgError(ev: Event) {
-    (ev.target as HTMLImageElement).src = 'assets/img/images.jpg';
+    (ev.target as HTMLImageElement).src = 'assets/img/images.jpeg';
   }
 
   priceForDefaultSize(product: Product): number {
@@ -64,7 +62,51 @@ export class CatalogComponent implements OnInit {
     if (!this.selectedCategory) {
       return 'Todos los Productos';
     }
-    const category = this.categories.find(c => c.id === this.selectedCategory);
+    const category = this.categories.find((c) => c.slug === this.selectedCategory);
     return category?.name || 'Productos';
+  }
+
+  private async loadCategories() {
+    try {
+      const categories = await firstValueFrom(this.categorySvc.list());
+      this.categories = categories.map((cat) => {
+        const meta = this.categoryMeta[cat.slug] ?? {};
+        return {
+          ...cat,
+          name: meta.name ?? cat.name,
+          description: meta.description ?? cat.description ?? '',
+          icon: meta.icon ?? '🎁',
+        };
+      });
+    } catch (err) {
+      console.error('Error cargando categorías desde API, usando fallback', err);
+      this.categories = Object.entries(this.categoryMeta).map(([slug, meta], idx) => ({
+        id: idx + 1,
+        slug,
+        name: meta.name ?? slug,
+        description: meta.description ?? '',
+        icon: meta.icon ?? '🎁',
+      }));
+    }
+  }
+
+  private async loadProducts(params: ProductQueryParams = {}) {
+    this.loading = true;
+    try {
+      const response: ProductListResponse = await this.svc.list(params);
+      this.products = response.data;
+      this.filteredProducts = response.data;
+    } catch (err) {
+      console.error('Error cargando productos desde API', err);
+      this.products = [];
+      this.filteredProducts = [];
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private getProductCategorySlug(product: Product): string | null {
+    if (!product.category) return null;
+    return typeof product.category === 'string' ? product.category : product.category.slug;
   }
 }

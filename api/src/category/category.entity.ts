@@ -9,6 +9,9 @@ export class Category {
   @Column({ unique: true })
   name: string;
 
+  @Column({ unique: true, nullable: true })
+  slug: string;
+
   @Column({ type: 'text', nullable: true })
   description?: string | null;
 

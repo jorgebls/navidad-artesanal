@@ -20,16 +20,49 @@ export interface CustomizationCategory {
   required: boolean;
 }
 
+export interface ProductCategory {
+  id: number;
+  slug: string;
+  name: string;
+  description?: string | null;
+}
+
+export interface ProductDesign {
+  id: number;
+  name: string;
+  description?: string | null;
+  colorHex?: string | null;
+  imageUrl?: string | null;
+  extraCost: number;
+  categoryId?: number | null;
+}
+
+export interface ProductFabric {
+  id: number;
+  name: string;
+  type?: string | null;
+  description?: string | null;
+  colorHex?: string | null;
+  extraCost: number;
+}
+
 export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
-  image: string;
+  basePrice?: number;
+  image?: string;
+  coverUrl?: string | null;
+  stock?: number;
+  createdAt?: string | null;
   sizes?: ProductSizeVariant[];
-  category: 'bola' | 'moño' | 'caja' | 'tambor';
+  category?: ProductCategory | string;
+  categoryId?: number | null;
   customizable: boolean;
   customizationOptions?: CustomizationCategory[];
+  designs?: ProductDesign[];
+  fabrics?: ProductFabric[];
 }
 
 export interface CustomizedProduct {
