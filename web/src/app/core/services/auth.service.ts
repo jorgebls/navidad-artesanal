@@ -30,7 +30,6 @@ export class AuthService {
     email: string;
     phone: string;
     documentId: string;
-    address: string;
     password: string;
   }): { ok: boolean; msg?: string } {
     const users = this.users();
@@ -44,7 +43,6 @@ export class AuthService {
       email: data.email.trim(),
       phone: data.phone.trim(),
       documentId: data.documentId.trim(),
-      address: data.address.trim(),
       passwordHash: this.hash(data.password)
     };
     users.push(user);
@@ -75,7 +73,6 @@ export class AuthService {
         email: '',
         phone: '',
         documentId: '',
-        address: '',
         passwordHash: ''
       };
     }
@@ -91,7 +88,6 @@ export class AuthService {
       email: (raw.email ?? '').toString(),
       phone: (raw.phone ?? '').toString(),
       documentId: (raw.documentId ?? '').toString(),
-      address: (raw.address ?? '').toString(),
       passwordHash: (raw.passwordHash ?? '').toString()
     };
   }

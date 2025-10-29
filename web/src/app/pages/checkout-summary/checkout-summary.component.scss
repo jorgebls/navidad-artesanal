@@ -1,0 +1,40 @@
+.checkout-summary {
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+  }
+  .box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .data-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .item { display: flex; justify-content: space-between; }
+  .total { display: grid; gap: 6px; margin-top: 12px; }
+  .summary-line, .total-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .order-summary { overflow-wrap: anywhere; }
+  .actions { margin-top: 12px; }
+  .primary, .secondary, .back { padding: 10px 14px; border-radius: 6px; border: none; cursor: pointer; }
+  .primary { background: #0f766e; color: #fff; }
+  .secondary, .back { background: #e5e7eb; color: #111827; }
+  .success { text-align: center; padding: 40px 0; }
+}
+
+

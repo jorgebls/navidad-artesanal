@@ -1,0 +1,131 @@
+<section class="checkout" *ngIf="!submitted(); else successView">
+  <div class="checkout-header">
+    <h2>Checkout</h2>
+    <p>Sin envíos: recibirás y pagarás tu pedido al entregarlo.</p>
+  </div>
+
+  <div class="checkout-grid">
+    <form class="checkout-form" (submit)="$event.preventDefault(); goToSummary()">
+      <h3>Datos de contacto y entrega</h3>
+
+      <label>
+        Nombre completo
+        <input
+          type="text"
+          [value]="form().fullName"
+          (input)="updateField('fullName', $any($event.target).value)"
+          placeholder="Ej: Juan Pérez"
+          required
+        />
+      </label>
+
+      <label>
+        Teléfono (WhatsApp)
+        <input
+          type="tel"
+          [value]="form().phone"
+          (input)="updateField('phone', $any($event.target).value)"
+          placeholder="Ej: 300 123 4567"
+          required
+        />
+      </label>
+
+      <label>
+        Ciudad
+        <select
+          class="pretty-select"
+          [value]="form().city"
+          (change)="updateField('city', $any($event.target).value)"
+          required
+        >
+          <option value="" disabled>Selecciona tu municipio</option>
+          <option value="Medellín">Medellín</option>
+          <option value="Bello">Bello</option>
+          <option value="Itagüí">Itagüí</option>
+          <option value="Envigado">Envigado</option>
+          <option value="Sabaneta">Sabaneta</option>
+          <option value="La Estrella">La Estrella</option>
+          <option value="Caldas">Caldas</option>
+          <option value="Copacabana">Copacabana</option>
+          <option value="Girardota">Girardota</option>
+          <option value="Barbosa">Barbosa</option>
+        </select>
+      </label>
+
+      <label>
+        Dirección / Punto de entrega
+        <input
+          type="text"
+          [value]="form().address"
+          (input)="updateField('address', $any($event.target).value)"
+          placeholder="Ej: Calle 10 # 20-30, puerta negra"
+          required
+        />
+      </label>
+
+      <label>
+        Notas (opcional)
+        <textarea
+          rows="3"
+          [value]="form().notes"
+          (input)="updateField('notes', $any($event.target).value)"
+          placeholder="Instrucciones para la entrega, horario, referencias, etc."
+        ></textarea>
+      </label>
+
+      <div class="payment-box">
+        <h4>Método de pago</h4>
+        <p class="cod">Pago contra entrega</p>
+        <small>Pagas en efectivo o por transferencia al momento de recibir tu pedido.</small>
+      </div>
+
+      <button
+        type="submit"
+        class="place-order-btn"
+        [disabled]="!isValid() || items.length === 0 || submitting()"
+      >
+        Confirmar datos
+      </button>
+    </form>
+
+    <aside class="order-summary">
+      <h3>Resumen</h3>
+      <div class="summary-items">
+        <div class="summary-item" *ngFor="let item of items">
+          <div class="item-info">
+            <div class="item-name">{{ item.product.name }}</div>
+            <div class="item-meta">Talla {{ item.size }} • x{{ item.qty }}</div>
+          </div>
+          <div class="item-price">{{ formatPrice((item.unitPrice || item.product.price) * item.qty) }}</div>
+        </div>
+      </div>
+      <div class="summary-total">
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <strong>{{ formatPrice(total) }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Envío</span>
+          <strong>{{ formatPrice(shipping) }}</strong>
+        </div>
+        <div class="total-line" style="margin-top: 6px;">
+          <span>Total</span>
+          <strong>{{ formatPrice(grandTotal) }}</strong>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<ng-template #successView>
+  <div class="success">
+    <div class="icon">✅</div>
+    <h3>¡Pedido confirmado!</h3>
+    <p>
+      Te contactaremos por WhatsApp para coordinar la entrega y el pago contra entrega.
+    </p>
+    <button class="back-btn" (click)="backToCatalog()">Volver al catálogo</button>
+  </div>
+</ng-template>
+
+

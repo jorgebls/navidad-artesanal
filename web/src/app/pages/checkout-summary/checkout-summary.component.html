@@ -1,0 +1,76 @@
+<section class="checkout-summary" *ngIf="!submitted(); else successView">
+  <div class="header">
+    <h2>Confirmación de datos</h2>
+    <p>Revisa tus datos de facturación y entrega antes de confirmar el pedido.</p>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <h3>Datos de facturación y entrega</h3>
+      <ul class="data-list" *ngIf="form as f">
+        <li><strong>Fecha del pedido:</strong> {{ formatDateTime(orderDate) }}</li>
+        <li><strong>Nombre:</strong> {{ f.fullName }}</li>
+        <li><strong>Teléfono:</strong> {{ f.phone }}</li>
+        <li *ngIf="currentUser"><strong>Cédula:</strong> {{ currentUser.documentId }}</li>
+        <li *ngIf="currentUser"><strong>Correo:</strong> {{ currentUser.email }}</li>
+        <li><strong>Ciudad:</strong> {{ f.city }}</li>
+        <li><strong>Dirección/Punto:</strong> {{ f.address }}</li>
+        <li *ngIf="f.notes"><strong>Notas:</strong> {{ f.notes }}</li>
+      </ul>
+
+      <div class="actions">
+        <button class="secondary" (click)="editData()">Editar datos</button>
+      </div>
+      <br>
+      <div class="payment-note">
+        Método de pago: <strong>Pago contra entrega</strong>
+      </div>
+    </div>
+    
+    <!-- Right side: payment note + order summary in a single column -->
+    <aside class="box order-summary" style="display: flex; flex-direction: column;">
+
+      <h3>Resumen del pedido</h3>
+      <div class="items" style="flex: 1;">
+        <div class="item" *ngFor="let item of items">
+          <div class="info">
+            <div class="name">{{ item.product.name }}</div>
+            <div class="meta">Talla {{ item.size }} • x{{ item.qty }}</div>
+          </div>
+          <div class="price">{{ formatPrice((item.unitPrice || item.product.price) * item.qty) }}</div>
+        </div>
+      </div>
+      <div class="total">
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <strong>{{ formatPrice(total) }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Envío</span>
+          <strong>{{ formatPrice(shipping) }}</strong>
+        </div>
+        <div class="total-line" style="margin-top: 6px;">
+          <span>Total</span>
+          <strong>{{ formatPrice(grandTotal) }}</strong>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <button class="primary" (click)="confirmOrder()" [disabled]="submitting()">
+          {{ submitting() ? 'Procesando...' : 'Confirmar pedido' }}
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<ng-template #successView>
+  <div class="success">
+    <div class="icon">✅</div>
+    <h3>¡Pedido confirmado!</h3>
+    <p>Te contactaremos por WhatsApp para coordinar la entrega y el pago.</p>
+    <button class="back" (click)="backToCatalog()">Volver al catálogo</button>
+  </div>
+  
+</ng-template>
+
+

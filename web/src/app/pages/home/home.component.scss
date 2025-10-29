@@ -124,8 +124,20 @@
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .category-card {
@@ -356,6 +368,9 @@
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  display: block; /* es un <a>, hacerlo card clickable completo */
+  text-decoration: none; /* quitar subrayado */
+  color: inherit; /* heredar color de textos */
 }
 
 .product-card:hover {
@@ -391,12 +406,14 @@
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 0.5rem;
+  text-decoration: none; /* prevenir subrayado en títulos dentro de <a> */
 }
 
 .product-description {
   color: #64748b;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .product-price {
@@ -404,6 +421,7 @@
   font-weight: 700;
   color: #c41e3a;
   margin-bottom: 1rem;
+  text-decoration: none;
 }
 
 .product-actions {

@@ -1,8 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CartService, CartItem } from '../../core/services/cart.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-cart',
@@ -13,6 +14,8 @@ import { CartService, CartItem } from '../../core/services/cart.service';
 })
 export class CartComponent {
   private cartService = inject(CartService);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
   private readonly itemsSignal = this.cartService.items;
   private readonly totalSignal = computed(() =>
@@ -26,7 +29,7 @@ export class CartComponent {
   );
   private readonly emptySignal = computed(() => this.itemsSignal().length === 0);
   private readonly checkoutPromptSignal = signal(false);
-  private readonly shippingCostSignal = signal(10000);
+  private readonly shippingCostSignal = signal(15000);
 
   // Getters para usar en el template
   get items(): CartItem[] {
@@ -73,7 +76,11 @@ export class CartComponent {
   }
 
   proceedToCheckout(): void {
+    if (!this.authService.current) {
     this.checkoutPromptSignal.set(true);
+      return;
+    }
+    this.router.navigate(['/checkout']);
   }
 
   closeCheckoutPrompt(): void {

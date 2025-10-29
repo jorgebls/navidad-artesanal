@@ -41,31 +41,31 @@
 
     <div class="categories-grid">
       <div class="category-card">
-        <div class="category-icon">🎅</div>
-        <h3 class="category-title">Adornos de Árbol</h3>
-        <p class="category-description">Esferas, estrellas y figuras únicas para tu árbol</p>
-        <a routerLink="/catalogo" class="category-btn">Explorar</a>
-      </div>
-
-      <div class="category-card">
-        <div class="category-icon">🕯️</div>
-        <h3 class="category-title">Decoración Hogar</h3>
-        <p class="category-description">Guirnaldas, centros de mesa y más para tu hogar</p>
-        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+        <div class="category-icon">🪩</div>
+        <h3 class="category-title">Bolas navideñas</h3>
+        <p class="category-description">Esferas decorativas para adornar el árbol</p>
+        <a routerLink="/catalogo" [queryParams]="{ categoria: 'bola' }" class="category-btn">Explorar</a>
       </div>
 
       <div class="category-card">
         <div class="category-icon">🎁</div>
-        <h3 class="category-title">Regalos Especiales</h3>
-        <p class="category-description">Regalos únicos y personalizados para seres queridos</p>
-        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+        <h3 class="category-title">Cajas decorativas</h3>
+        <p class="category-description">Empaques festivos para regalos navideños</p>
+        <a routerLink="/catalogo" [queryParams]="{ categoria: 'caja' }" class="category-btn">Explorar</a>
       </div>
 
       <div class="category-card">
-        <div class="category-icon">⭐</div>
-        <h3 class="category-title">Accesorios</h3>
-        <p class="category-description">Tarjetas, envolturas y detalles navideños</p>
-        <a routerLink="/catalogo" class="category-btn">Explorar</a>
+        <div class="category-icon">🎀</div>
+        <h3 class="category-title">Moños</h3>
+        <p class="category-description">Lazos elegantes que realzan la decoración navideña</p>
+        <a routerLink="/catalogo" [queryParams]="{ categoria: 'mono' }" class="category-btn">Explorar</a>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">🥁</div>
+        <h3 class="category-title">Tambores</h3>
+        <p class="category-description">Mini tambores decorativos con estilo tradicional navideño</p>
+        <a routerLink="/catalogo" [queryParams]="{ categoria: 'tambor' }" class="category-btn">Explorar</a>
       </div>
     </div>
   </div>
@@ -81,55 +81,34 @@
       </p>
     </div>
 
-    <div class="products-grid">
-      <div class="product-card">
+    <div class="products-grid" *ngIf="featuredProducts.length; else featuredEmpty">
+      <a class="product-card" *ngFor="let p of featuredProducts" [routerLink]="['/producto', p.id]">
         <div class="product-image">
-          <div class="image-placeholder">
-            <span class="product-emoji">🎄</span>
-          </div>
+          <img
+            [src]="p.coverUrl || p.image || 'assets/img/images.jpeg'"
+            [alt]="p.name"
+            loading="lazy"
+            (error)="onImgError($event)" />
         </div>
         <div class="product-info">
-          <h3 class="product-title">Esfera Artesanal Roja</h3>
-          <p class="product-description">Hecha a mano con técnica tradicional</p>
-          <div class="product-price">€24.99</div>
-        </div>
-        <div class="product-actions">
-          <button class="btn btn-primary btn-full">Añadir al Carrito</button>
-        </div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-image">
-          <div class="image-placeholder">
-            <span class="product-emoji">🎀</span>
+          <h3 class="product-title">{{ p.name }}</h3>
+          <p class="product-description">{{ p.description }}</p>
+          <div class="product-price">
+            {{ priceForDefaultSize(p) | currency:'COP':'symbol-narrow':'1.0-0':'es-CO' }}
           </div>
         </div>
-        <div class="product-info">
-          <h3 class="product-title">Caja Clásica</h3>
-          <p class="product-description">Decoración tradicional con aroma natural</p>
-          <div class="product-price">€39.99</div>
-        </div>
         <div class="product-actions">
-          <button class="btn btn-primary btn-full">Añadir al Carrito</button>
+          <span class="btn btn-primary btn-full">Ver detalle</span>
         </div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-image">
-          <div class="image-placeholder">
-            <span class="product-emoji">⭐</span>
-          </div>
-        </div>
-        <div class="product-info">
-          <h3 class="product-title">Caja Premium Roja</h3>
-          <p class="product-description">6 piezas únicas pintadas a mano</p>
-          <div class="product-price">€45.99</div>
-        </div>
-        <div class="product-actions">
-          <button class="btn btn-primary btn-full">Añadir al Carrito</button>
-        </div>
-      </div>
+      </a>
     </div>
+    <ng-template #featuredEmpty>
+      <div class="products-grid">
+        <div class="empty-state">
+          <p>No hay productos para mostrar.</p>
+        </div>
+      </div>
+    </ng-template>
 
     <div class="section-footer">
       <a routerLink="/catalogo" class="btn btn-outline">Ver Todos los Productos</a>

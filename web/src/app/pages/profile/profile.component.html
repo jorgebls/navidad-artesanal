@@ -4,7 +4,6 @@
     <p><strong>Email:</strong> {{ user.email }}</p>
     <p><strong>Teléfono:</strong> {{ user.phone || '—' }}</p>
     <p><strong>Cédula:</strong> {{ user.documentId || '—' }}</p>
-    <p><strong>Dirección:</strong> {{ user.address || '—' }}</p>
   
     <button (click)="logout()" class="btn btn-ghost">Cerrar sesión</button>
   </section>

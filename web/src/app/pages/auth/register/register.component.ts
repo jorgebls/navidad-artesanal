@@ -22,7 +22,6 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.minLength(7)]],
       documentId: ['', [Validators.required, Validators.minLength(5)]],
-      address: ['', [Validators.required, Validators.minLength(5)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     });
@@ -32,13 +31,12 @@ export class RegisterComponent {
     this.errorMsg = '';
     if (this.form.invalid) return;
 
-    const { firstName, lastName, email, phone, documentId, address, password, confirmPassword } = this.form.value as {
+    const { firstName, lastName, email, phone, documentId,  password, confirmPassword } = this.form.value as {
       firstName: string;
       lastName: string;
       email: string;
       phone: string;
       documentId: string;
-      address: string;
       password: string;
       confirmPassword: string;
     };
@@ -54,7 +52,6 @@ export class RegisterComponent {
       email,
       phone,
       documentId,
-      address,
       password
     });
     if (!res.ok) {

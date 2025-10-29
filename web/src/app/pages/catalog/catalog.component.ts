@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductsService, ProductListResponse, ProductQueryParams } from '../../core/services/products.service';
 import { Product } from '../../shared/models/product.model';
 import { CategoryService, Category } from '../../core/services/category.service';
@@ -16,6 +16,7 @@ import { firstValueFrom } from 'rxjs';
 export class CatalogComponent implements OnInit {
   private svc = inject(ProductsService);
   private categorySvc = inject(CategoryService);
+  private route = inject(ActivatedRoute);
   products: Product[] = [];
   filteredProducts: Product[] = [];
   categories: Array<Category & { icon: string }> = [];
@@ -32,7 +33,14 @@ export class CatalogComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadCategories();
-    await this.loadProducts();
+
+    // Leer categoria desde query params (e.g., /catalogo?categoria=bola)
+    const categoryFromQuery = this.route.snapshot.queryParamMap.get('categoria') || '';
+    if (categoryFromQuery) {
+      await this.onCategorySelect(categoryFromQuery);
+    } else {
+      await this.loadProducts();
+    }
   }
 
   async onCategorySelect(categoryId: string): Promise<void> {
