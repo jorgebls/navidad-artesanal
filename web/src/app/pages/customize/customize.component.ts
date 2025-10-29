@@ -1,218 +1,173 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CustomizationService } from '../../core/services/customization.service';
 import { CartService } from '../../core/services/cart.service';
-import { Product, CustomizedProduct } from '../../shared/models/product.model';
+import {
+  Product,
+  ProductDesign,
+  ProductFabric,
+  ProductSizeVariant,
+  CustomizedProduct,
+} from '../../shared/models/product.model';
 
 @Component({
-  selector: 'app-customize',
+  selector: 'app-customize-detail',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './customize.component.html',
-  styleUrls: ['./customize.component.scss']
+  styleUrls: ['./customize.component.scss'],
 })
-export class CustomizeComponent implements OnInit, OnDestroy {
-  categories: string[] = [];
-  selectedCategory: string = '';
+export class CustomizeComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private customization = inject(CustomizationService);
+  private cart = inject(CartService);
+
+  categorySlug = '';
+  categoryName = '';
   products: Product[] = [];
   selectedProduct: Product | null = null;
-  currentCustomization: CustomizedProduct | null = null;
-  isCustomizationComplete = false;
-  
-  private subscription: Subscription = new Subscription();
+  selectedSize: ProductSizeVariant | null = null;
+  selectedDesignId: number | null = null;
+  selectedFabricId: number | null = null;
+  quantity = 1;
+  loading = true;
+  error: string | null = null;
 
-  constructor(
-    private customizationService: CustomizationService,
-    private cartService: CartService,
-    private router: Router
-  ) {}
+  async ngOnInit(): Promise<void> {
+    this.categorySlug = this.route.snapshot.paramMap.get('slug') ?? '';
+    if (!this.categorySlug) {
+      this.router.navigate(['/personalizar']);
+      return;
+    }
 
-  ngOnInit(): void {
-    // Debug: Verificar que los datos se carguen correctamente
-    console.log('Inicializando componente de personalización...');
-    
-    // Cargar datos inmediatamente
-    this.loadData();
-
-    this.subscription.add(
-      this.customizationService.getCurrentCustomization().subscribe(customization => {
-        this.currentCustomization = customization;
-        this.isCustomizationComplete = this.customizationService.isCustomizationComplete();
-      })
-    );
+    await this.loadCategoryData();
   }
 
-  private async loadData(): Promise<void> {
+  get sizes(): ProductSizeVariant[] {
+    return this.selectedProduct?.sizes ?? [];
+  }
+
+  get designs(): ProductDesign[] {
+    return this.selectedProduct?.designs ?? [];
+  }
+
+  get fabrics(): ProductFabric[] {
+    return this.selectedProduct?.fabrics ?? [];
+  }
+
+  get selectedDesign(): ProductDesign | null {
+    return this.designs.find((d) => d.id === this.selectedDesignId) ?? null;
+  }
+
+  get selectedFabric(): ProductFabric | null {
+    return this.fabrics.find((f) => f.id === this.selectedFabricId) ?? null;
+  }
+
+  get baseVariantPrice(): number {
+    if (!this.selectedProduct) return 0;
+    if (this.selectedSize) return this.selectedSize.price;
+    return this.selectedProduct.basePrice ?? this.selectedProduct.price;
+  }
+
+  get unitPrice(): number {
+    let price = this.baseVariantPrice;
+    if (this.selectedDesign) price += this.selectedDesign.extraCost ?? 0;
+    if (this.selectedFabric) price += this.selectedFabric.extraCost ?? 0;
+    return price;
+  }
+
+  get totalPrice(): number {
+    return this.unitPrice * this.quantity;
+  }
+
+  private async loadCategoryData(): Promise<void> {
     try {
-      // Asegurar que los datos estén cargados
-      await this.customizationService.ensureCustomizableProducts();
-      
-      this.categories = this.customizationService.getProductCategories();
-      console.log('Categorías encontradas:', this.categories);
-      
-      // Si no hay categorías, usar datos de fallback
-      if (this.categories.length === 0) {
-        console.log('No se encontraron categorías, usando datos de fallback');
-        this.loadFallbackData();
+      this.loading = true;
+      this.error = null;
+
+      const categories = await this.customization.getCategories();
+      const category = categories.find((c) => c.slug === this.categorySlug);
+      if (!category) {
+        this.error = 'La categoría seleccionada no está disponible en este momento.';
         return;
       }
-      
-      this.selectedCategory = this.categories[0] || '';
-      this.loadProducts();
-      console.log('Productos cargados:', this.products);
-    } catch (error) {
-      console.error('Error cargando datos:', error);
-      this.loadFallbackData();
+
+      this.categoryName = category.name;
+      const products = await this.customization.getProductsByCategorySlug(this.categorySlug);
+      if (!products.length) {
+        this.error = 'No hay productos personalizables disponibles para esta categoría.';
+        return;
+      }
+
+      this.products = products;
+      this.selectProduct(products[0]);
+    } catch (err) {
+      console.error('Error cargando personalización', err);
+      this.error = 'Ocurrió un problema al cargar la personalización.';
+    } finally {
+      this.loading = false;
     }
   }
 
-  private loadFallbackData(): void {
-    // Datos de fallback para testing
-    this.categories = ['bola', 'moño', 'caja', 'tambor'];
-    this.selectedCategory = this.categories[0];
-    this.products = [
-      {
-        id: 'fallback-1',
-        name: 'Bolita navideña',
-        description: 'Bolita navideña artesanal personalizable.',
-        price: 12000,
-        image: 'assets/img/images.jpeg',
-        category: 'bola',
-        customizable: true,
-        sizes: [
-          { size: 'XS', price: 9000, description: 'Bolita XS para centros de mesa' },
-          { size: 'S', price: 10500, description: 'Bolita S con brillo suave' },
-          { size: 'M', price: 12000, description: 'Bolita M tamaño clásico' },
-          { size: 'L', price: 13500, description: 'Bolita L para destacar' },
-          { size: 'XL', price: 15500, description: 'Bolita XL llamativa' }
-        ],
-        customizationOptions: [
-          {
-            id: 'color',
-            name: 'Color',
-            required: true,
-            options: [
-              { id: 'rojo', name: 'Rojo', value: 'rojo', price: 0 },
-              { id: 'dorado', name: 'Dorado', value: 'dorado', price: 2000 },
-              { id: 'plateado', name: 'Plateado', value: 'plateado', price: 2000 },
-              { id: 'verde', name: 'Verde', value: 'verde', price: 0 },
-              { id: 'azul', name: 'Azul', value: 'azul', price: 0 }
-            ]
-          },
-          {
-            id: 'tela',
-            name: 'Tipo de Tela',
-            required: true,
-            options: [
-              { id: 'seda', name: 'Seda', value: 'seda', price: 3000 },
-              { id: 'terciopelo', name: 'Terciopelo', value: 'terciopelo', price: 2500 },
-              { id: 'lino', name: 'Lino', value: 'lino', price: 1000 },
-              { id: 'algodon', name: 'Algodón', value: 'algodon', price: 0 }
-            ]
-          }
-        ]
-      }
-    ];
-    console.log('Datos de fallback cargados:', this.products);
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  onCategoryChange(): void {
-    this.loadProducts();
-    this.selectedProduct = null;
-    this.customizationService.resetCustomization();
-  }
-
-  async onProductSelect(product: Product): Promise<void> {
+  selectProduct(product: Product): void {
     this.selectedProduct = product;
-    await this.customizationService.startCustomization(product.id);
+    this.selectedSize = product.sizes?.[0] ?? null;
+    this.selectedDesignId = product.designs?.[0]?.id ?? null;
+    this.selectedFabricId = product.fabrics?.[0]?.id ?? null;
+    this.quantity = 1;
   }
 
-  onSizeChange(size: string): void {
-    this.customizationService.updateSize(size);
+  selectSize(size: ProductSizeVariant): void {
+    this.selectedSize = size;
   }
 
-  onCustomizationChange(categoryId: string, optionId: string): void {
-    this.customizationService.updateCustomization(categoryId, optionId);
+  selectDesign(design: ProductDesign): void {
+    this.selectedDesignId = design.id;
   }
 
-  onQuantityChange(quantity: number): void {
-    this.customizationService.updateQuantity(quantity);
+  selectFabric(fabric: ProductFabric): void {
+    this.selectedFabricId = fabric.id;
   }
 
-  getSelectedCustomization(categoryId: string): string {
-    return this.currentCustomization?.customizations[categoryId] || '';
-  }
-
-  getCustomizationPrice(categoryId: string, optionId: string): number {
-    const option = this.customizationService.getCustomizationOption(categoryId, optionId);
-    return option?.price || 0;
-  }
-
-  getBasePrice(): number {
-    if (!this.currentCustomization) return 0;
-    const selectedSize = this.currentCustomization.baseProduct.sizes?.find(s => s.size === this.currentCustomization!.selectedSize);
-    return selectedSize?.price || this.currentCustomization.baseProduct.price;
-  }
-
-  getUnitPrice(): number {
-    if (!this.currentCustomization) return 0;
-    let unitPrice = this.getBasePrice();
-    
-    // Add customization costs
-    Object.entries(this.currentCustomization.customizations).forEach(([categoryId, optionId]) => {
-      const option = this.customizationService.getCustomizationOption(categoryId, optionId);
-      if (option?.price) {
-        unitPrice += option.price;
-      }
-    });
-    
-    return unitPrice;
+  updateQuantity(value: number | string): void {
+    const numeric = typeof value === 'string' ? parseInt(value, 10) : value;
+    if (Number.isNaN(numeric)) {
+      this.quantity = 1;
+      return;
+    }
+    this.quantity = Math.min(99, Math.max(1, numeric));
   }
 
   addToCart(): void {
-    const customizedProduct = this.customizationService.addToCart();
-    if (customizedProduct) {
-      this.cartService.addCustomized(customizedProduct);
-      alert('Producto personalizado agregado al carrito');
-      this.router.navigate(['/carrito']);
-    } else {
-      alert('Por favor completa todas las opciones requeridas');
-    }
-  }
+    if (!this.selectedProduct) return;
 
-  resetCustomization(): void {
-    this.customizationService.resetCustomization();
-    this.selectedProduct = null;
-  }
+    const variantSize = this.selectedSize?.size ?? 'ÚNICO';
+    const customizations: Record<string, string> = {};
+    if (this.selectedDesign) customizations['design'] = String(this.selectedDesign.id);
+    if (this.selectedFabric) customizations['fabric'] = String(this.selectedFabric.id);
 
-  getCategoryIcon(category: string): string {
-    const icons: { [key: string]: string } = {
-      'bola': '🔴',
-      'moño': '🎀',
-      'caja': '📦',
-      'tambor': '🥁'
+    const payload: CustomizedProduct = {
+      productId: this.selectedProduct.id,
+      baseProduct: this.selectedProduct,
+      selectedSize: variantSize,
+      customizations,
+      quantity: this.quantity,
+      totalPrice: this.totalPrice,
     };
-    return icons[category] || '🎁';
+
+    this.cart.addCustomized(payload);
+    this.router.navigate(['/carrito']);
   }
 
-  getCategoryName(category: string): string {
-    const names: { [key: string]: string } = {
-      'bola': 'Bolas',
-      'moño': 'Moños',
-      'caja': 'Cajas',
-      'tambor': 'Tambores'
-    };
-    return names[category] || category;
+  colorSwatch(colorHex?: string | null): string {
+    if (!colorHex) return '#b71c1c';
+    return colorHex.startsWith('#') ? colorHex : `#${colorHex}`;
   }
 
-  private loadProducts(): void {
-    this.products = this.customizationService.getProductsByCategory(this.selectedCategory);
+  goBack(): void {
+    this.router.navigate(['/personalizar']);
   }
 }

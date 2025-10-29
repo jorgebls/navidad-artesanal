@@ -225,6 +225,13 @@ export class ProductService {
       categoryId: restProduct.categoryId ?? mappedCategory?.id ?? null,
       designs: mappedDesigns,
       fabrics: mappedFabrics,
+      sizes: (restProduct.sizes ?? []).map((variant: any) => ({
+        size: String(variant.size ?? '').toUpperCase(),
+        price: Number(variant.price ?? 0),
+        description: variant.description ?? '',
+        image: variant.image ?? null,
+      })),
+      customizationOptions: restProduct.customizationOptions ?? [],
       coverUrl,
     };
   }

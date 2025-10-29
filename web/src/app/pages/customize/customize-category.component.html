@@ -1,0 +1,27 @@
+<section class="category-select">
+  <div class="container">
+    <header>
+      <h1>Personaliza tu producto</h1>
+      <p>Elige una categoría para comenzar a configurar tamaños, colores y materiales.</p>
+    </header>
+
+    <div *ngIf="loading" class="feedback">Cargando categorías…</div>
+    <div *ngIf="!loading && error" class="feedback error">{{ error }}</div>
+
+    <div *ngIf="!loading && !error" class="grid">
+      <button
+        type="button"
+        class="card"
+        *ngFor="let c of categories"
+        (click)="navigate(c.slug)"
+      >
+        <div class="icon" [class.small]="c.productCount < 3">
+          <span>{{ c.slug === 'bola' ? '🔴' : c.slug === 'mono' ? '🎀' : c.slug === 'caja' ? '📦' : '🥁' }}</span>
+        </div>
+        <h2>{{ c.name }}</h2>
+        <p class="description">{{ c.description || 'Opciones artesanales listas para personalizar.' }}</p>
+        <p class="meta">{{ c.productCount }} opciones disponibles</p>
+      </button>
+    </div>
+  </div>
+</section>

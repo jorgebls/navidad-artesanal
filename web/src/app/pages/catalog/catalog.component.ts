@@ -25,7 +25,7 @@ export class CatalogComponent implements OnInit {
 
   private readonly categoryMeta: Record<string, { icon: string; name?: string; description?: string }> = {
     bola: { icon: '🔴', name: 'Bolas navideñas', description: 'Bolas navideñas artesanales' },
-    'moño': { icon: '🎀', name: 'Moños', description: 'Moños decorativos únicos' },
+    mono: { icon: '🎀', name: 'Moños', description: 'Moños decorativos únicos' },
     caja: { icon: '📦', name: 'Cajas decorativas', description: 'Cajas regalo personalizadas' },
     tambor: { icon: '🥁', name: 'Tambores', description: 'Tambores decorativos especiales' },
   };

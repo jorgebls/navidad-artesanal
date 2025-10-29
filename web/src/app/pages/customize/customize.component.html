@@ -1,184 +1,145 @@
-<section class="customize">
-  <div class="container">
-    <div class="header">
-      <h1>Personaliza tus productos</h1>
-      <p class="subtitle">Elige materiales, colores y detalles únicos para tus decoraciones navideñas</p>
-    </div>
+<section class="customize-detail">
+  <div class="container" *ngIf="!loading && !error; else feedbackTpl">
+    <button class="back" type="button" (click)="goBack()">← Volver</button>
 
-    <!-- Category Selection -->
-    <div class="category-selection" *ngIf="!selectedProduct">
-      <h2>Selecciona una categoría</h2>
-      <div class="category-grid">
-        <button 
-          *ngFor="let category of categories" 
-          class="category-card"
-          [class.active]="selectedCategory === category"
-          (click)="selectedCategory = category; onCategoryChange()">
-          <div class="category-icon">
-            <span class="icon">{{ getCategoryIcon(category) }}</span>
-          </div>
-          <h3>{{ getCategoryName(category) }}</h3>
-        </button>
-      </div>
-    </div>
+    <header>
+      <h1>Personalizar {{ categoryName }}</h1>
+      <p>Selecciona un modelo y ajusta tamaños, diseños y materiales.</p>
+    </header>
 
-    <!-- Product Selection -->
-    <div class="product-selection" *ngIf="!selectedProduct && products.length > 0">
-      <h2>Elige tu producto</h2>
-      <div class="product-grid">
-        <div 
-          *ngFor="let product of products" 
-          class="product-card"
-          (click)="onProductSelect(product)">
-          <div class="product-image">
-            <img [src]="product.image" [alt]="product.name">
-          </div>
-          <div class="product-info">
+    <div class="layout" *ngIf="selectedProduct; else noProductsTpl">
+      <aside class="product-list">
+        <h2>Elige un modelo</h2>
+        <div class="products">
+          <button
+            type="button"
+            class="product-card"
+            *ngFor="let product of products"
+            [class.active]="selectedProduct && product.id === selectedProduct.id"
+            (click)="selectProduct(product)"
+          >
             <h3>{{ product.name }}</h3>
             <p>{{ product.description }}</p>
-            <div class="price">Desde ${{ product.price | number }}</div>
-          </div>
+            <span class="price">Desde ${{ product.basePrice ?? product.price | number }}</span>
+          </button>
         </div>
-      </div>
-    </div>
+      </aside>
 
-    <!-- Customization Panel -->
-    <div class="customization-panel" *ngIf="selectedProduct && currentCustomization">
-      <div class="customization-header">
-        <button class="back-btn" (click)="resetCustomization()">
-          ← Volver a productos
-        </button>
-        <h2>Personaliza tu {{ selectedProduct.name }}</h2>
-      </div>
-
-      <div class="customization-content">
-        <!-- Size Selection -->
-        <div class="customization-section">
+      <section class="panel">
+        <div class="section" *ngIf="sizes.length">
           <h3>Tamaño</h3>
-          <div class="size-options">
-            <label 
-              *ngFor="let size of selectedProduct.sizes" 
-              class="size-option"
-              [class.selected]="currentCustomization.selectedSize === size.size">
-              <input 
-                type="radio" 
-                name="size" 
-                [value]="size.size"
-                [checked]="currentCustomization.selectedSize === size.size"
-                (change)="onSizeChange(size.size)">
-              <div class="size-info">
-                <span class="size-label">{{ size.size }}</span>
-                <span class="size-price">${{ size.price | number }}</span>
-                <p class="size-description">{{ size.description }}</p>
-              </div>
-            </label>
+          <div class="options">
+            <button
+              type="button"
+              class="option"
+              *ngFor="let size of sizes"
+              [class.active]="size.size === selectedSize?.size"
+              (click)="selectSize(size)"
+            >
+              <span class="option-title">{{ size.size }}</span>
+              <span class="option-sub">${{ size.price | number }}</span>
+              <small>{{ size.description }}</small>
+            </button>
           </div>
         </div>
 
-        <!-- Customization Options -->
-        <div 
-          *ngFor="let category of selectedProduct.customizationOptions" 
-          class="customization-section">
-          <h3>{{ category.name }}</h3>
-          <div class="customization-options">
-            <label 
-              *ngFor="let option of category.options" 
-              class="customization-option"
-              [class.selected]="getSelectedCustomization(category.id) === option.id">
-              <input 
-                type="radio" 
-                [name]="category.id" 
-                [value]="option.id"
-                [checked]="getSelectedCustomization(category.id) === option.id"
-                (change)="onCustomizationChange(category.id, option.id)">
-              <div class="option-info">
-                <span class="option-name">{{ option.name }}</span>
-                <span 
-                  class="option-price" 
-                  *ngIf="option.price && option.price > 0">
-                  +${{ option.price | number }}
-                </span>
-              </div>
-            </label>
+        <div class="section" *ngIf="designs.length">
+          <h3>Diseño</h3>
+          <div class="options">
+            <button
+              type="button"
+              class="option"
+              *ngFor="let design of designs"
+              [class.active]="design.id === selectedDesignId"
+              (click)="selectDesign(design)"
+            >
+              <span class="option-title">
+                <span class="swatch" [style.background]="colorSwatch(design.colorHex)"></span>
+                {{ design.name }}
+              </span>
+              <small>{{ design.description }}</small>
+              <span class="option-sub">+${{ design.extraCost | number }}</span>
+            </button>
           </div>
         </div>
 
-        <!-- Quantity Selection -->
-        <div class="customization-section">
+        <div class="section" *ngIf="fabrics.length">
+          <h3>Material</h3>
+          <div class="options">
+            <button
+              type="button"
+              class="option"
+              *ngFor="let fabric of fabrics"
+              [class.active]="fabric.id === selectedFabricId"
+              (click)="selectFabric(fabric)"
+            >
+              <span class="option-title">
+                <span class="swatch" [style.background]="colorSwatch(fabric.colorHex)"></span>
+                {{ fabric.name }}
+              </span>
+              <small>{{ fabric.description }}</small>
+              <span class="option-sub">+${{ fabric.extraCost | number }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="section">
           <h3>Cantidad</h3>
-          <div class="quantity-selector">
-            <button 
-              class="quantity-btn"
-              (click)="onQuantityChange(currentCustomization.quantity - 1)"
-              [disabled]="currentCustomization.quantity <= 1">
-              -
-            </button>
-            <input 
-              type="number" 
-              class="quantity-input"
-              #quantityInput
-              [value]="currentCustomization.quantity"
-              (change)="onQuantityChange(+quantityInput.value)"
-              min="1" 
-              max="99">
-            <button 
-              class="quantity-btn"
-              (click)="onQuantityChange(currentCustomization.quantity + 1)"
-              [disabled]="currentCustomization.quantity >= 99">
-              +
-            </button>
+          <div class="quantity">
+            <button type="button" (click)="updateQuantity(quantity - 1)" [disabled]="quantity <= 1">-</button>
+            <input type="number" min="1" max="99" [ngModel]="quantity" (ngModelChange)="updateQuantity($event)" />
+            <button type="button" (click)="updateQuantity(quantity + 1)" [disabled]="quantity >= 99">+</button>
           </div>
         </div>
 
-        <!-- Price Summary -->
-        <div class="price-summary">
-          <div class="price-breakdown">
-            <div class="price-item">
-              <span>Precio unitario:</span>
-              <span>${{ getUnitPrice() | number }}</span>
+        <div class="summary">
+          <div class="lines">
+            <div>
+              <span>Precio base</span>
+              <strong>${{ baseVariantPrice | number }}</strong>
             </div>
-            <ng-container *ngFor="let category of selectedProduct.customizationOptions">
-              <div 
-                class="price-item"
-                *ngIf="getSelectedCustomization(category.id)">
-                <span>{{ category.name }}:</span>
-                <span>+${{ getCustomizationPrice(category.id, getSelectedCustomization(category.id)) | number }}</span>
-              </div>
-            </ng-container>
-            <div class="price-item">
-              <span>Cantidad:</span>
-              <span>{{ currentCustomization.quantity }} unidad{{ currentCustomization.quantity > 1 ? 'es' : '' }}</span>
+            <div *ngIf="selectedDesign">
+              <span>Diseño {{ selectedDesign.name }}</span>
+              <strong>+${{ selectedDesign.extraCost | number }}</strong>
             </div>
-            <div class="price-total">
-              <span>Total:</span>
-              <span>${{ currentCustomization.totalPrice | number }}</span>
+            <div *ngIf="selectedFabric">
+              <span>Material {{ selectedFabric.name }}</span>
+              <strong>+${{ selectedFabric.extraCost | number }}</strong>
             </div>
+            <div>
+              <span>Total unidad</span>
+              <strong>${{ unitPrice | number }}</strong>
+            </div>
+            <div>
+              <span>Cantidad</span>
+              <strong>{{ quantity }}</strong>
+            </div>
+          </div>
+          <div class="total">
+            <span>Total</span>
+            <strong>${{ totalPrice | number }}</strong>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button 
-            class="btn btn-primary"
-            [disabled]="!isCustomizationComplete"
-            (click)="addToCart()">
-            Agregar {{ currentCustomization.quantity }} {{ currentCustomization.quantity > 1 ? 'unidades' : 'unidad' }} al carrito - ${{ currentCustomization.totalPrice | number }}
-          </button>
-          <button 
-            class="btn btn-secondary"
-            (click)="resetCustomization()">
-            Empezar de nuevo
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="!selectedProduct && products.length === 0">
-      <div class="empty-content">
-        <h2>No hay productos disponibles</h2>
-        <p>No se encontraron productos en esta categoría.</p>
-      </div>
+        <button class="cta" type="button" (click)="addToCart()">
+          Agregar al carrito por ${{ totalPrice | number }}
+        </button>
+      </section>
     </div>
   </div>
+
+  <ng-template #feedbackTpl>
+    <div class="feedback" *ngIf="loading">Cargando opciones de personalización…</div>
+    <div class="feedback error" *ngIf="!loading && error">
+      <p>{{ error }}</p>
+      <button type="button" (click)="goBack()">Volver</button>
+    </div>
+  </ng-template>
+
+  <ng-template #noProductsTpl>
+    <div class="feedback error">
+      <p>No hay productos disponibles para esta categoría.</p>
+      <button type="button" (click)="goBack()">Elegir otra categoría</button>
+    </div>
+  </ng-template>
 </section>

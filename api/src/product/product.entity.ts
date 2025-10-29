@@ -35,6 +35,28 @@ export class Product {
   @Column({ default: false })
   customizable: boolean;
 
+  @Column({ type: 'jsonb', nullable: true })
+  sizes?: Array<{
+    size: string;
+    price: number;
+    description: string;
+    image?: string | null;
+  }> | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  customizationOptions?: Array<{
+    id: string;
+    name: string;
+    required: boolean;
+    options: Array<{
+      id: string;
+      name: string;
+      value: string;
+      price?: number;
+      image?: string | null;
+    }>;
+  }> | null;
+
   @ManyToOne(() => Category, (category) => category.products, {
     nullable: true,
     onDelete: 'SET NULL',

@@ -18,7 +18,7 @@ const CATEGORY_SEEDS: CategorySeed[] = [
     description: 'Esferas decorativas y personalizables para el árbol.',
   },
   {
-    key: 'moño',
+    key: 'mono',
     name: 'Moños',
     description: 'Moños artesanales para adornar regalos o espacios.',
   },
