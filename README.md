@@ -11,6 +11,11 @@ Proyecto universitario desarrollado en **Angular**.
 * **Windows 10/11** con acceso a **Microsoft Store** para tener **App Installer** (que trae `winget`).
   Si `winget` no existe, abre Microsoft Store → busca **App Installer** → **Instalar** / **Actualizar**.
 * **PowerShell** (puedes usarlo en modo usuario; para instalar con winget a veces verás un prompt pidiendo elevación).
+* **Cuenta Supabase** (o base de datos/PostgreSQL accesible). Necesitarás:
+  * URL y credenciales de la base (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`).
+  * Claves de Storage (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE`, `SUPABASE_BUCKET`, `SUPABASE_JWT_SECRET`).
+  * Un bucket llamado `products` para las fotos (se crea desde el panel de Supabase).
+* Completa el archivo `api/.env` con esas variables antes de iniciar el backend.
 
 ---
 
@@ -154,6 +159,20 @@ npm.cmd install
 
 ---
 
+### 14) Iniciar el backend
+
+```powershell
+cd api
+npm.cmd install
+npm.cmd run start:dev
+```
+
+**Qué hace:** Entra en la carpeta del servidor, instala sus dependencias y levanta la API NestJS en modo desarrollo (por defecto en `http://localhost:3000`).
+
+> Usa otra ventana de terminal para estos pasos y déjala abierta mientras trabajas.
+
+---
+
 ### 14) Iniciar la app
 
 ```powershell
@@ -174,19 +193,19 @@ Copia y pega la **URL que muestra la terminal** (por ejemplo, `http://localhost:
 
 🛠️ **Funcionalidades actuales**
 
-* **Home** con sección *hero* y acceso directo al catálogo.
-* **Catálogo de productos** (datos semilla desde **JSON**).
-* **Detalle de producto** con información ampliada.
-* **Carrito funcional**:
-
-  * Añadir productos desde catálogo/detalle
-  * Incrementar/decrementar cantidades
-  * Eliminar ítems y **vaciar carrito**
-  * **Subtotal y total en tiempo real**
-  * **Persistencia en localStorage** (se mantiene entre recargas)
-* **Autenticación básica**: Login, Registro y Perfil.
-* **Header dinámico** según estado de sesión (mostrar/ocultar acciones).
-* **Ruteo principal**: `/` (home), `/catalogo`, `/producto/:id`, `/carrito`, `/login`, `/registro`, `/perfil`,`personalizar`.
+* **Home** con hero y accesos directos al catálogo y personalización.
+* **Catálogo** consumiendo la API Nest (filtros por categoría, ordenamiento básico).
+* **Detalle de producto** con portada, tallas y controles de cantidad.
+* **Carrito**:
+  * Añadir desde catálogo o detalle.
+  * Ajustar cantidades, eliminar ítems y vaciar carrito.
+  * Totales en tiempo real + persistencia en `localStorage`.
+* **Autenticación con JWT**: registro, login, refresco de perfil y logout.
+* **Perfil de usuario** editable (datos básicos) y listado de pedidos con cancelación.
+* **Checkout** con formulario validado, consumo de `/location` (departamentos/ciudades) y creación de pedidos.
+* **Personalización** de productos personalizables (diseños, telas, tamaños).
+* **Protección de rutas** (`authGuard`) y manejo de sesión mediante interceptor (envío del token).
+* **Rutas principales**: `/`, `/catalogo`, `/producto/:id`, `/carrito`, `/checkout`, `/checkout/resumen`, `/login`, `/registro`, `/perfil`, `/personalizar/:slug`.
 
 
 ⸻
@@ -195,4 +214,3 @@ Copia y pega la **URL que muestra la terminal** (por ejemplo, `http://localhost:
 	•	Proyecto probado en macOS y Windows.
 	•	Para cualquier error en dependencias, eliminar la carpeta node_modules/ y correr npm install de nuevo.
 	•	Las imágenes y datos de ejemplo están en la carpeta public/assets/.
-
