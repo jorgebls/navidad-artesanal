@@ -33,6 +33,16 @@
       <div class="row">
         <label>Contraseña
           <input type="password" formControlName="password" autocomplete="new-password" />
+          <ul class="password-reqs" *ngIf="form.get('password')?.touched || form.get('password')?.dirty">
+            <li [class.met]="hasMinLength">Mínimo 8 caracteres</li>
+            <li [class.met]="hasUpperCase">Al menos una mayúscula</li>
+            <li [class.met]="hasLowerCase">Al menos una minúscula</li>
+            <li [class.met]="hasNumber">Al menos un número</li>
+            <li [class.met]="hasSpecial">Al menos un carácter especial</li>
+          </ul>
+          <div class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('weakPassword')">
+            La contraseña no cumple con los requisitos mínimos.
+          </div>
         </label>
 
         <label>Confirmar contraseña

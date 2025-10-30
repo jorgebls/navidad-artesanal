@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -22,7 +22,7 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.minLength(7)]],
       documentId: ['', [Validators.required, Validators.minLength(5)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required, Validators.minLength(8), passwordMinRequirementsValidator()]],
       confirmPassword: ['', [Validators.required]],
     });
   }
@@ -60,4 +60,37 @@ export class RegisterComponent {
     }
     this.router.navigateByUrl('/');
   }
+
+  // Getters para requisitos de contraseña
+  get passwordValue(): string {
+    return this.form.get('password')?.value || '';
+  }
+  get hasMinLength(): boolean {
+    return this.passwordValue.length >= 8;
+  }
+  get hasUpperCase(): boolean {
+    return /[A-Z]/.test(this.passwordValue);
+  }
+  get hasLowerCase(): boolean {
+    return /[a-z]/.test(this.passwordValue);
+  }
+  get hasNumber(): boolean {
+    return /[0-9]/.test(this.passwordValue);
+  }
+  get hasSpecial(): boolean {
+    return /[!@#$%^&*(),.?":{}|<>]/.test(this.passwordValue);
+  }
+}
+
+// Validador personalizado para contraseña segura
+export function passwordMinRequirementsValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const value = control.value || '';
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasLowerCase = /[a-z]/.test(value);
+    const hasNumber = /[0-9]/.test(value);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    const passes = hasUpperCase && hasLowerCase && hasNumber && hasSpecial;
+    return !passes ? { weakPassword: true } : null;
+  };
 }
