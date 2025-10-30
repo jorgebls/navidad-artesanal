@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductsService } from '../../core/services/products.service';
 import { CartService } from '../../core/services/cart.service';
-import { Product, ProductSizeVariant } from '../../shared/models/product.model';
+import { Product, ProductPhoto, ProductSizeVariant } from '../../shared/models/product.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -22,6 +22,8 @@ export class ProductDetailComponent implements OnInit {
   quantity = 1;
   isInCart = false;
   selectedSize = '';
+  activePhotoIndex = 0;
+  readonly fallbackImage = 'assets/img/images.jpeg';
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
@@ -29,6 +31,7 @@ export class ProductDetailComponent implements OnInit {
 
     if (this.product) {
       this.selectedSize = this.resolveInitialSize();
+      this.setInitialPhoto();
       this.syncCartState();
     }
   }
@@ -41,7 +44,9 @@ export class ProductDetailComponent implements OnInit {
       ...this.product,
       price: variant?.price ?? this.product.price,
       description: variant?.description ?? this.product.description,
-      image: variant?.image ?? this.product.coverUrl ?? this.product.image
+      image: this.currentImage || this.fallbackImage,
+      coverUrl: this.product.coverUrl ?? this.photos.find((p) => p.isCover)?.url ?? this.currentImage ?? null,
+      photos: this.product.photos,
     };
 
     this.cartService.add(productSnapshot, this.quantity, this.selectedSize);
@@ -109,10 +114,29 @@ export class ProductDetailComponent implements OnInit {
     return this.product?.description ?? '';
   }
 
+  get photos(): ProductPhoto[] {
+    return this.product?.photos ?? [];
+  }
+
   get currentImage(): string {
     if (this.selectedVariant?.image) return this.selectedVariant.image;
+    const gallery = this.photos;
+    if (gallery.length > 0) {
+      const index = Math.min(this.activePhotoIndex, gallery.length - 1);
+      const photo = gallery[index];
+      if (photo?.url) return photo.url;
+    }
     if (this.product?.coverUrl) return this.product.coverUrl;
-    return this.product?.image ?? '';
+    if (gallery.length > 0 && gallery[0]?.url) {
+      return gallery[0].url!;
+    }
+    return this.product?.image ?? this.fallbackImage;
+  }
+
+  selectPhoto(index: number): void {
+    const gallery = this.photos;
+    if (index < 0 || index >= gallery.length) return;
+    this.activePhotoIndex = index;
   }
 
   private resolveInitialSize(): string {
@@ -133,6 +157,16 @@ export class ProductDetailComponent implements OnInit {
     }
 
     return this.variantKey(variants[0]);
+  }
+
+  private setInitialPhoto(): void {
+    const gallery = this.photos;
+    if (!gallery.length) {
+      this.activePhotoIndex = 0;
+      return;
+    }
+    const coverIndex = gallery.findIndex((photo) => photo.isCover);
+    this.activePhotoIndex = coverIndex >= 0 ? coverIndex : 0;
   }
 
   private ensureValidSize(): void {

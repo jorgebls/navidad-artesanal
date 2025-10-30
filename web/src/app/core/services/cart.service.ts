@@ -146,11 +146,4 @@ export class CartService {
   isEmpty(): boolean {
     return this.itemsValue.length === 0;
   }
-
-  // Método para sincronizar con el servidor cuando el usuario inicie sesión
-  syncWithUser(userId: string): void {
-    // Aquí podrías implementar la lógica para sincronizar el carrito local
-    // con el carrito del usuario en el servidor
-    console.log(`Sincronizando carrito para usuario: ${userId}`);
-  }
 }

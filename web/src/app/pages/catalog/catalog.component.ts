@@ -112,9 +112,4 @@ export class CatalogComponent implements OnInit {
       this.loading = false;
     }
   }
-
-  private getProductCategorySlug(product: Product): string | null {
-    if (!product.category) return null;
-    return typeof product.category === 'string' ? product.category : product.category.slug;
-  }
 }
