@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Size } from '../size/size.entity';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly repo: Repository<Category>,
+    @InjectRepository(Size)
+    private readonly sizeRepo: Repository<Size>,
   ) {}
 
   findAll() {
@@ -43,5 +46,12 @@ export class CategoryService {
     if (!category) throw new NotFoundException('Categoría no encontrada');
     await this.repo.remove(category);
     return { ok: true };
+  }
+
+  findSizes(categoryId: number) {
+    return this.sizeRepo.find({
+      where: { categoryId },
+      order: { name: 'ASC' },
+    });
   }
 }

@@ -35,7 +35,7 @@ export class CartService {
       ...item,
       size: (item as Partial<CartItem>).size
         ? String(item.size).toUpperCase()
-        : 'M'
+        : 'UNIQUE'
     }));
   }
 
@@ -59,7 +59,7 @@ export class CartService {
     }, 0);
   }
 
-  add(product: Product, qty = 1, size = 'M'): void {
+  add(product: Product, qty = 1, size = 'UNIQUE'): void {
     const normalizedSize = size.toUpperCase();
     const items = [...this.itemsValue];
     const productSnapshot: Product = { ...product };

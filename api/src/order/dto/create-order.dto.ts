@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsPositive, IsString, MaxLength, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsPositive, IsString, MaxLength, Min, ValidateNested, IsInt } from 'class-validator';
 
 export class CreateOrderItemDto {
   @IsString()
@@ -39,11 +39,6 @@ export class CreateOrderDto {
   phone!: string;
 
   @IsString()
-  @MaxLength(100)
-  @IsNotEmpty()
-  city!: string;
-
-  @IsString()
   @MaxLength(200)
   @IsNotEmpty()
   address!: string;
@@ -63,6 +58,12 @@ export class CreateOrderDto {
 
   @IsEnum(['COD'])
   paymentMethod!: 'COD';
+
+  @Type(() => Number)
+  @IsInt()
+  departmentId!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  cityId!: number;
 }
-
-

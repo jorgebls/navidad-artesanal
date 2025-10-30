@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router,RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -27,7 +27,7 @@ export class RegisterComponent {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.errorMsg = '';
     if (this.form.invalid) return;
 
@@ -46,7 +46,7 @@ export class RegisterComponent {
       return;
     }
 
-    const res = this.auth.register({
+    const res = await this.auth.register({
       firstName,
       lastName,
       email,

@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { SnowEffectComponent } from './shared/components/snow-effect/snow-effect.component';
+import { SessionTimeoutService } from './core/services/session-timeout.service';
 
 @Component({
   selector: 'app-root',
@@ -27,5 +28,5 @@ import { SnowEffectComponent } from './shared/components/snow-effect/snow-effect
   `]
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private readonly sessionTimeout: SessionTimeoutService) {}
 }

@@ -21,8 +21,7 @@ export class ProductDetailComponent implements OnInit {
   product: Product | undefined;
   quantity = 1;
   isInCart = false;
-  selectedSize = 'M';
-  private readonly defaultSize = 'M';
+  selectedSize = '';
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
@@ -84,33 +83,20 @@ export class ProductDetailComponent implements OnInit {
   get availableSizes(): string[] {
     const variants = this.product?.sizes;
     if (!variants || variants.length === 0) {
-      return [this.defaultSize];
+      return [];
     }
-    return variants.map(v => v.size.toUpperCase());
+    return variants.map((variant) => this.variantKey(variant));
   }
 
   sizeLabel(size: string): string {
-    const normalized = size.toUpperCase();
-    switch (normalized) {
-      case 'XS':
-      case 'S':
-      case 'M':
-      case 'L':
-      case 'XL':
-        return normalized;
-      default:
-        return normalized;
-    }
+    const variant = this.product?.sizes?.find((v) => this.variantKey(v) === size);
+    return variant?.sizeName ?? variant?.sizeCode ?? size;
   }
 
   get selectedVariant(): ProductSizeVariant | undefined {
     const variants = this.product?.sizes;
     if (!variants || variants.length === 0) return undefined;
-    return (
-      variants.find(v => v.size.toUpperCase() === this.selectedSize) ||
-      variants.find(v => v.size.toUpperCase() === this.defaultSize) ||
-      variants[0]
-    );
+    return variants.find((v) => this.variantKey(v) === this.selectedSize) || variants[0];
   }
 
   get currentPrice(): number {
@@ -131,7 +117,7 @@ export class ProductDetailComponent implements OnInit {
 
   private resolveInitialSize(): string {
     if (!this.product) {
-      return this.defaultSize;
+      return '';
     }
 
     const cartMatch = this.cartService
@@ -143,17 +129,26 @@ export class ProductDetailComponent implements OnInit {
 
     const variants = this.product.sizes;
     if (!variants || variants.length === 0) {
-      return this.defaultSize;
+      return '';
     }
 
-    const mVariant = variants.find(v => v.size.toUpperCase() === this.defaultSize);
-    return (mVariant?.size ?? variants[0].size).toUpperCase();
+    return this.variantKey(variants[0]);
   }
 
   private ensureValidSize(): void {
     const sizes = this.availableSizes;
+    if (sizes.length === 0) {
+      this.selectedSize = 'UNIQUE';
+      return;
+    }
     if (!sizes.includes(this.selectedSize)) {
       this.selectedSize = sizes[0];
     }
+  }
+
+  private variantKey(variant: ProductSizeVariant): string {
+    if (!variant) return '';
+    const code = variant.sizeCode ?? variant.sizeName ?? String(variant.sizeId);
+    return code.toUpperCase();
   }
 }

@@ -1,5 +1,7 @@
 export interface ProductSizeVariant {
-  size: string;
+  sizeId: number;
+  sizeCode?: string | null;
+  sizeName?: string | null;
   price: number;
   description: string;
   image?: string;
@@ -25,6 +27,12 @@ export interface ProductCategory {
   slug: string;
   name: string;
   description?: string | null;
+  sizes?: Array<{
+    id: number;
+    code: string;
+    name: string;
+    description?: string | null;
+  }>;
 }
 
 export interface ProductDesign {

@@ -42,8 +42,8 @@ export class HomeComponent implements OnInit {
   }
 
   priceForDefaultSize(product: Product): number {
-    const variant = product.sizes?.find(v => v.size.toUpperCase() === this.defaultSize);
-    return variant?.price ?? product.price;
+    const variant = product.sizes?.find((v) => (v.sizeCode ?? '').toUpperCase() === this.defaultSize);
+    return variant?.price ?? product.sizes?.[0]?.price ?? product.price;
   }
 
   subscribe() {

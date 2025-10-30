@@ -144,7 +144,7 @@ export class CustomizeComponent implements OnInit {
   addToCart(): void {
     if (!this.selectedProduct) return;
 
-    const variantSize = this.selectedSize?.size ?? 'ÚNICO';
+    const variantSize = this.getSizeKey(this.selectedSize);
     const customizations: Record<string, string> = {};
     if (this.selectedDesign) customizations['design'] = String(this.selectedDesign.id);
     if (this.selectedFabric) customizations['fabric'] = String(this.selectedFabric.id);
@@ -169,5 +169,11 @@ export class CustomizeComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/personalizar']);
+  }
+
+  private getSizeKey(size: ProductSizeVariant | null): string {
+    if (!size) return 'UNIQUE';
+    const code = size.sizeCode ?? size.sizeName ?? String(size.sizeId);
+    return code.toUpperCase();
   }
 }

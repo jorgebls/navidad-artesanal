@@ -5,5 +5,5 @@ export interface User {
   email: string;
   phone: string;
   documentId: string;
-  passwordHash: string; // solo demo (no usar así en producción)
+  createdAt?: string;
 }

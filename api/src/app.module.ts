@@ -13,6 +13,7 @@ import { CategoryModule } from './category/category.module';
 import { DesignModule } from './design/design.module';
 import { FabricModule } from './fabric/fabric.module';
 import { OrderModule } from './order/order.module';
+import { LocationModule } from './location/location.module';
 
 
 @Module({
@@ -52,6 +53,8 @@ import { OrderModule } from './order/order.module';
     PhotoModule,
 
     OrderModule,
+
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

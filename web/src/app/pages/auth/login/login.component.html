@@ -1,6 +1,7 @@
 <section class="login">
   <div class="login-card">
     <h2>Iniciar sesión</h2>
+    <p class="info" *ngIf="infoMsg">{{ infoMsg }}</p>
     <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>

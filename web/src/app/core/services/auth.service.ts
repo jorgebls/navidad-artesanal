@@ -1,94 +1,148 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { StorageService } from './storage.service';
 import { LS } from './keys';
 import { User } from '../../shared/models/user.model';
 
+interface AuthSession {
+  token: string;
+  user: User;
+}
+
+interface AuthApiResponse {
+  access_token: string;
+  user: User;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private http = inject(HttpClient);
   private storage = inject(StorageService);
 
-  private users(): User[] {
-    const stored = this.storage.get<User[]>(LS.USERS, []);
-    return stored.map(user => this.normalizeUser(user));
-  }
-  private saveUsers(list: User[]) {
-    this.storage.set(LS.USERS, list.map(user => this.normalizeUser(user)));
+  private session = signal<AuthSession | null>(null);
+  readonly userSignal = computed<User | null>(() => this.session()?.user ?? null);
+
+  constructor() {
+    const stored = this.storage.get<AuthSession | null>(LS.AUTH, null);
+    if (stored) {
+      this.session.set(stored);
+      this.refreshProfile().catch(() => this.clearSession());
+    }
   }
 
   get current(): User | null {
-    const raw = this.storage.get<User | null>(LS.USER_CURRENT, null);
-    return raw ? this.normalizeUser(raw) : null;
+    return this.session()?.user ?? null;
   }
 
-  private hash(pwd: string) {
-    return btoa(pwd); // DEMO solamente
+  get token(): string | null {
+    return this.session()?.token ?? null;
   }
 
-  register(data: {
+  isAuthenticated(): boolean {
+    return !!this.session();
+  }
+
+  async ensureSession(): Promise<boolean> {
+    if (this.current) return true;
+    if (this.token) {
+      try {
+        await this.refreshProfile();
+        return !!this.current;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  async register(payload: {
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     documentId: string;
     password: string;
-  }): { ok: boolean; msg?: string } {
-    const users = this.users();
-    if (users.some(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-      return { ok: false, msg: 'El email ya está registrado' };
+  }): Promise<{ ok: boolean; msg?: string }> {
+    try {
+      const res = await firstValueFrom(
+        this.http.post<AuthApiResponse>('/api/auth/register', payload),
+      );
+      this.setSession({ token: res.access_token, user: res.user });
+      return { ok: true };
+    } catch (err: any) {
+      return { ok: false, msg: this.extractErrorMessage(err) };
     }
-    const user: User = {
-      id: crypto.randomUUID(),
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      email: data.email.trim(),
-      phone: data.phone.trim(),
-      documentId: data.documentId.trim(),
-      passwordHash: this.hash(data.password)
-    };
-    users.push(user);
-    this.saveUsers(users);
-    this.storage.set(LS.USER_CURRENT, user); // autologin
-    return { ok: true };
   }
 
-  login(email: string, password: string): { ok: boolean; msg?: string } {
-    const users = this.users();
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (!user) return { ok: false, msg: 'Usuario no encontrado' };
-    if (user.passwordHash !== this.hash(password)) return { ok: false, msg: 'Contraseña incorrecta' };
-    this.storage.set(LS.USER_CURRENT, user);
-    return { ok: true };
+  async login(email: string, password: string): Promise<{ ok: boolean; msg?: string }> {
+    try {
+      const res = await firstValueFrom(
+        this.http.post<AuthApiResponse>('/api/auth/login', { email, password }),
+      );
+      this.setSession({ token: res.access_token, user: res.user });
+      return { ok: true };
+    } catch (err: any) {
+      return { ok: false, msg: this.extractErrorMessage(err) };
+    }
+  }
+
+  async refreshProfile(): Promise<void> {
+    if (!this.token) return;
+    try {
+      const user = await firstValueFrom(this.http.get<User>('/api/auth/me'));
+      const session = this.session();
+      if (session) {
+        this.setSession({ token: session.token, user });
+      }
+    } catch (err) {
+      this.clearSession();
+      throw err;
+    }
+  }
+
+  async updateProfile(payload: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    documentId?: string;
+  }): Promise<{ ok: boolean; user?: User; msg?: string }> {
+    try {
+      const updated = await firstValueFrom(this.http.patch<User>('/api/user/me', payload));
+      const session = this.session();
+      if (session) {
+        this.setSession({ token: session.token, user: updated });
+      }
+      return { ok: true, user: updated };
+    } catch (err: any) {
+      return { ok: false, msg: this.extractErrorMessage(err) };
+    }
   }
 
   logout(): void {
-    this.storage.remove(LS.USER_CURRENT);
+    this.clearSession();
   }
 
-  private normalizeUser(raw: any): User {
-    if (!raw) {
-      return {
-        id: crypto.randomUUID(),
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        documentId: '',
-        passwordHash: ''
-      };
+  private setSession(session: AuthSession | null) {
+    this.session.set(session);
+    if (session) {
+      this.storage.set(LS.AUTH, session);
+    } else {
+      this.storage.remove(LS.AUTH);
     }
+  }
 
-    const legacyName = typeof raw.name === 'string' ? raw.name : '';
-    const [legacyFirst, ...legacyRest] = legacyName.split(' ').filter(Boolean);
-    const legacyLast = legacyRest.join(' ');
+  private clearSession() {
+    this.session.set(null);
+    this.storage.remove(LS.AUTH);
+  }
 
-    return {
-      id: raw.id ?? crypto.randomUUID(),
-      firstName: (raw.firstName ?? legacyFirst ?? '').toString(),
-      lastName: (raw.lastName ?? legacyLast ?? '').toString(),
-      email: (raw.email ?? '').toString(),
-      phone: (raw.phone ?? '').toString(),
-      documentId: (raw.documentId ?? '').toString(),
-      passwordHash: (raw.passwordHash ?? '').toString()
-    };
+  private extractErrorMessage(err: any): string {
+    const message = err?.error?.message ?? err?.message ?? 'Error inesperado';
+    if (Array.isArray(message)) {
+      return message[0];
+    }
+    return message;
   }
 }

@@ -31,25 +31,35 @@
       </label>
 
       <label>
-        Ciudad
+        Departamento
         <select
           class="pretty-select"
-          [value]="form().city"
-          (change)="updateField('city', $any($event.target).value)"
+          [value]="form().departmentId ?? ''"
+          (change)="onDepartmentChange(toNumber($any($event.target).value))"
+          required
+        >
+          <option value="" disabled>Selecciona un departamento</option>
+          <option *ngFor="let dept of departments()" [value]="dept.id">
+            {{ dept.name }}
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Ciudad / Municipio
+        <select
+          class="pretty-select"
+          [disabled]="loadingCities() || !cities().length"
+          [value]="form().cityId ?? ''"
+          (change)="onCityChange(toNumber($any($event.target).value))"
           required
         >
           <option value="" disabled>Selecciona tu municipio</option>
-          <option value="Medellín">Medellín</option>
-          <option value="Bello">Bello</option>
-          <option value="Itagüí">Itagüí</option>
-          <option value="Envigado">Envigado</option>
-          <option value="Sabaneta">Sabaneta</option>
-          <option value="La Estrella">La Estrella</option>
-          <option value="Caldas">Caldas</option>
-          <option value="Copacabana">Copacabana</option>
-          <option value="Girardota">Girardota</option>
-          <option value="Barbosa">Barbosa</option>
+          <option *ngFor="let city of cities()" [value]="city.id">
+            {{ city.name }}
+          </option>
         </select>
+        <small *ngIf="loadingCities()">Cargando municipios…</small>
       </label>
 
       <label>
@@ -94,7 +104,7 @@
         <div class="summary-item" *ngFor="let item of items">
           <div class="item-info">
             <div class="item-name">{{ item.product.name }}</div>
-            <div class="item-meta">Talla {{ item.size }} • x{{ item.qty }}</div>
+            <div class="item-meta">Talla {{ item.size === 'UNIQUE' ? 'Única' : item.size }} • x{{ item.qty }}</div>
           </div>
           <div class="item-price">{{ formatPrice((item.unitPrice || item.product.price) * item.qty) }}</div>
         </div>
@@ -127,5 +137,3 @@
     <button class="back-btn" (click)="backToCatalog()">Volver al catálogo</button>
   </div>
 </ng-template>
-
-

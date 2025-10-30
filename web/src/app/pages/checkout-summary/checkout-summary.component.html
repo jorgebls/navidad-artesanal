@@ -13,7 +13,8 @@
         <li><strong>Teléfono:</strong> {{ f.phone }}</li>
         <li *ngIf="currentUser"><strong>Cédula:</strong> {{ currentUser.documentId }}</li>
         <li *ngIf="currentUser"><strong>Correo:</strong> {{ currentUser.email }}</li>
-        <li><strong>Ciudad:</strong> {{ f.city }}</li>
+        <li><strong>Departamento:</strong> {{ f.departmentName }}</li>
+        <li><strong>Ciudad:</strong> {{ f.cityName }}</li>
         <li><strong>Dirección/Punto:</strong> {{ f.address }}</li>
         <li *ngIf="f.notes"><strong>Notas:</strong> {{ f.notes }}</li>
       </ul>
@@ -35,7 +36,7 @@
         <div class="item" *ngFor="let item of items">
           <div class="info">
             <div class="name">{{ item.product.name }}</div>
-            <div class="meta">Talla {{ item.size }} • x{{ item.qty }}</div>
+            <div class="meta">Talla {{ item.size === 'UNIQUE' ? 'Única' : item.size }} • x{{ item.qty }}</div>
           </div>
           <div class="price">{{ formatPrice((item.unitPrice || item.product.price) * item.qty) }}</div>
         </div>
@@ -72,5 +73,3 @@
   </div>
   
 </ng-template>
-
-

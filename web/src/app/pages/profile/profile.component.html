@@ -1,13 +1,138 @@
-<section class="profile" *ngIf="user; else noUser">
-    <h2>Mi perfil</h2>
-    <p><strong>Nombre:</strong> {{ user.firstName }} {{ user.lastName }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Teléfono:</strong> {{ user.phone || '—' }}</p>
-    <p><strong>Cédula:</strong> {{ user.documentId || '—' }}</p>
-  
-    <button (click)="logout()" class="btn btn-ghost">Cerrar sesión</button>
+<section class="profile" *ngIf="user(); else noUserTpl">
+  <header>
+    <div>
+      <h2>Mi perfil</h2>
+      <p>Hola {{ user()?.firstName }} 👋 Actualiza tus datos y revisa tus pedidos.</p>
+    </div>
+    <button class="logout" type="button" (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <form class="profile-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-head">
+      <h3>Datos personales</h3>
+      <p>Esta información se usará en tus pedidos y comunicaciones.</p>
+    </div>
+
+    <div class="alerts">
+      <p class="success" *ngIf="formSuccess()">{{ formSuccess() }}</p>
+      <p class="error" *ngIf="formError()">{{ formError() }}</p>
+    </div>
+
+    <div class="form-grid">
+      <label>
+        <span>Nombre</span>
+        <input type="text" formControlName="firstName" placeholder="Ingresa tu nombre" />
+        <small *ngIf="form.controls.firstName.invalid && form.controls.firstName.touched">Mínimo 2 caracteres.</small>
+      </label>
+
+      <label>
+        <span>Apellido</span>
+        <input type="text" formControlName="lastName" placeholder="Ingresa tu apellido" />
+        <small *ngIf="form.controls.lastName.invalid && form.controls.lastName.touched">Mínimo 2 caracteres.</small>
+      </label>
+
+      <label>
+        <span>Correo</span>
+        <input type="email" formControlName="email" placeholder="tucorreo@dominio.com" />
+        <small *ngIf="form.controls.email.invalid && form.controls.email.touched">Ingresa un correo válido.</small>
+      </label>
+
+      <label>
+        <span>Teléfono</span>
+        <input type="tel" formControlName="phone" placeholder="Ej. 3001234567" />
+        <small *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Mínimo 7 dígitos.</small>
+      </label>
+
+      <label>
+        <span>Documento</span>
+        <input type="text" formControlName="documentId" placeholder="Número de identificación" />
+        <small *ngIf="form.controls.documentId.invalid && form.controls.documentId.touched">Mínimo 5 caracteres.</small>
+      </label>
+
+      <div class="meta">
+        <span class="label">Miembro desde</span>
+        <span class="value">{{ user()?.createdAt | date:'mediumDate' }}</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="saving() || form.pristine || form.invalid">
+        <span *ngIf="!saving(); else savingTpl">Guardar cambios</span>
+      </button>
+    </div>
+  </form>
+
+  <section class="orders">
+    <h3>Historial de pedidos</h3>
+    <ng-container *ngIf="!ordersLoading(); else loadingTpl">
+      <p class="hint" *ngIf="ordersError()">{{ ordersError() }}</p>
+      <p class="hint" *ngIf="!ordersError() && orders().length === 0">No has hecho pedidos todavía.</p>
+
+      <table *ngIf="orders().length">
+        <thead>
+          <tr>
+            <th># Pedido</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Entrega</th>
+            <th>Total</th>
+            <th>Detalles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders(); trackBy: trackByOrderId">
+            <td>{{ order.id }}</td>
+            <td>{{ order.createdAt | date:'short' }}</td>
+            <td>
+              <span class="badge"
+                [class.pending]="order.status.code === 'IN_PROCESS'"
+                [class.confirmed]="order.status.code === 'COMPLETED'"
+                [class.cancelled]="order.status.code === 'CANCELLED'">
+                {{ order.status.label }}
+              </span>
+              <button
+                *ngIf="order.status.code === 'IN_PROCESS'"
+                class="cancel-btn"
+                type="button"
+                (click)="cancelOrder(order)"
+                [disabled]="cancellingOrderId() === order.id"
+              >
+                {{ cancellingOrderId() === order.id ? 'Cancelando…' : 'Cancelar pedido' }}
+              </button>
+            </td>
+            <td>
+              <div class="delivery">
+                <span>{{ order.city.department?.name || 'Antioquia' }} • {{ order.city.name }}</span>
+                <small>{{ order.address }}</small>
+              </div>
+            </td>
+            <td>{{ formatPrice(order.total) }}</td>
+            <td>
+              <ul class="items">
+                <li *ngFor="let item of order.items">
+                  <div class="item-name">{{ item.productName }} <span>•</span> Talla {{ item.size === 'UNIQUE' ? 'Única' : item.size }} (x{{ item.qty }})</div>
+                  <div class="item-meta">Subtotal {{ formatPrice(item.unitPrice) }}</div>
+                </li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
   </section>
-  
-  <ng-template #noUser>
-    <p>No has iniciado sesión.</p>
-  </ng-template>
+</section>
+
+<ng-template #savingTpl>
+  Guardando…
+</ng-template>
+
+<ng-template #loadingTpl>
+  <p class="hint">Cargando historial…</p>
+</ng-template>
+
+<ng-template #noUserTpl>
+  <div class="unauth">
+    <h3>No has iniciado sesión</h3>
+    <p>Por favor inicia sesión para ver tu perfil y el historial de pedidos.</p>
+  </div>
+</ng-template>

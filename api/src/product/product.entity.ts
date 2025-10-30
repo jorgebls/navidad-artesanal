@@ -37,7 +37,7 @@ export class Product {
 
   @Column({ type: 'jsonb', nullable: true })
   sizes?: Array<{
-    size: string;
+    sizeId: number;
     price: number;
     description: string;
     image?: string | null;

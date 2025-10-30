@@ -13,6 +13,11 @@ export class CategoryController {
     return this.service.findAll();
   }
 
+  @Get(':id/sizes')
+  listSizes(@Param('id') id: string) {
+    return this.service.findSizes(Number(id));
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateCategoryDto) {

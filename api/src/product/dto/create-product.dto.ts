@@ -13,9 +13,10 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 class ProductSizeDto {
-  @IsString()
-  @IsNotEmpty()
-  size: string;
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  sizeId: number;
 
   @IsNumber()
   price: number;

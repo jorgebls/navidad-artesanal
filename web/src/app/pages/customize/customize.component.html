@@ -33,10 +33,10 @@
               type="button"
               class="option"
               *ngFor="let size of sizes"
-              [class.active]="size.size === selectedSize?.size"
+              [class.active]="size.sizeId === selectedSize?.sizeId"
               (click)="selectSize(size)"
             >
-              <span class="option-title">{{ size.size }}</span>
+              <span class="option-title">{{ size.sizeName || size.sizeCode || ('ID ' + size.sizeId) }}</span>
               <span class="option-sub">${{ size.price | number }}</span>
               <small>{{ size.description }}</small>
             </button>

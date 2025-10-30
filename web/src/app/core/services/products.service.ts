@@ -89,6 +89,7 @@ export class ProductsService {
         : undefined) ??
       null;
 
+    const categorySizesRaw: any[] = Array.isArray(categoryRaw?.sizes) ? categoryRaw.sizes : [];
     const mappedCategory =
       categoryRaw && typeof categoryRaw === 'object'
         ? {
@@ -96,6 +97,12 @@ export class ProductsService {
             slug: ((categoryRaw.slug ?? categoryRaw.name ?? '') as string).toLowerCase(),
             name: categoryRaw.name ?? '',
             description: categoryRaw.description ?? null,
+            sizes: categorySizesRaw.map((size: any) => ({
+              id: Number(size.id),
+              code: String(size.code ?? '').toUpperCase(),
+              name: size.name ?? '',
+              description: size.description ?? null,
+            })),
           }
         : undefined;
 
@@ -133,10 +140,18 @@ export class ProductsService {
       customizable: Boolean(raw['customizable']),
       category: mappedCategory,
       categoryId,
-      sizes: (raw['sizes'] ?? []).map((variant: any) => ({
-        ...variant,
-        size: String(variant.size ?? '').toUpperCase(),
-      })),
+      sizes: (raw['sizes'] ?? []).map((variant: any) => {
+        const sizeId = Number(variant.sizeId);
+        const sizeMeta = mappedCategory?.sizes?.find((size) => size.id === sizeId);
+        return {
+          sizeId,
+          price: Number(variant.price ?? 0),
+          description: variant.description ?? '',
+          image: variant.image ?? undefined,
+          sizeCode: sizeMeta?.code ?? null,
+          sizeName: sizeMeta?.name ?? null,
+        };
+      }),
       customizationOptions: raw['customizationOptions'] ?? [],
       createdAt: raw['createdAt'] ?? null,
       designs,

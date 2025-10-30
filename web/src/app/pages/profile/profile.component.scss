@@ -1,16 +1,328 @@
 .profile {
-    padding: 1rem;
-  }
-  button {
-    margin-top: 1rem;
-    padding: .6rem 1rem;
-    border: 1px solid #b71c1c;
-    border-radius: 8px;
-    background: transparent;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.profile > header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 35px rgba(50, 50, 73, 0.08);
+  padding: 1.75rem;
+
+  h2 {
+    margin: 0 0 0.35rem;
+    font-size: 2rem;
     color: #b71c1c;
+  }
+
+  p {
+    margin: 0;
+    color: #546e7a;
+  }
+
+  .logout {
+    padding: 0.5rem 1.4rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 999px;
+    background: #fff;
     cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(183, 28, 28, 0.15);
+      background: #ffecec;
+    }
   }
-  button:hover {
-    background: #b71c1c;
-    color: #fff;
+}
+
+.profile-form {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 35px rgba(50, 50, 73, 0.08);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.75rem;
+
+  .form-head {
+    h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1.5rem;
+      color: #1f2d3d;
+    }
+
+    p {
+      margin: 0;
+      color: #607d8b;
+    }
   }
+
+  .alerts {
+    min-height: 1.1rem;
+
+    .success,
+    .error {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
+
+    .error {
+      color: #c62828;
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+
+    label,
+    .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      background: #fafafa;
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    label:focus-within {
+      border-color: rgba(183, 28, 28, 0.5);
+      box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.12);
+    }
+
+    span {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #90a4ae;
+    }
+
+    input {
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-size: 1rem;
+      color: #263238;
+      outline: none;
+    }
+
+    small {
+      font-size: 0.8rem;
+      color: #c62828;
+    }
+
+    .meta {
+      background: #fff7f7;
+      border: 1px dashed #ffcdd2;
+
+      .label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #ef5350;
+      }
+
+      .value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #b71c1c;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #c62828, #b71c1c);
+      color: #fff;
+      box-shadow: 0 12px 25px rgba(198, 40, 40, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 30px rgba(183, 28, 28, 0.25);
+      }
+
+      &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.orders {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 12px 35px rgba(50, 50, 73, 0.08);
+  overflow-x: auto;
+
+  h3 {
+    margin: 0 0 1.25rem;
+    font-size: 1.45rem;
+    color: #1f2d3d;
+  }
+
+  .hint {
+    color: #607d8b;
+    font-size: 0.95rem;
+    margin: 0.5rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: #fafafa;
+
+      th {
+        text-align: left;
+        padding: 0.75rem 0.9rem;
+        font-size: 0.9rem;
+        color: #546e7a;
+      }
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #eceff1;
+
+      &:hover {
+        background: #fafafa;
+      }
+    }
+
+    td {
+      padding: 0.9rem;
+      vertical-align: top;
+      font-size: 0.95rem;
+    }
+  }
+
+  .badge {
+    display: inline-flex;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    &.pending { background: rgba(255, 193, 7, 0.15); color: #b28704; }
+    &.confirmed { background: rgba(76, 175, 80, 0.18); color: #2e7d32; }
+    &.cancelled { background: rgba(244, 67, 54, 0.15); color: #c62828; }
+  }
+
+  .cancel-btn {
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #ffcdd2;
+    background: #fff5f5;
+    color: #c62828;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: #ffecec;
+      color: #b71c1c;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .delivery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+    color: #455a64;
+
+    small {
+      font-size: 0.8rem;
+      color: #78909c;
+    }
+  }
+
+  .items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+
+    .item-name {
+      font-weight: 600;
+      color: #263238;
+    }
+
+    .item-meta {
+      color: #607d8b;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.unauth {
+  text-align: center;
+  background: #fff4f4;
+  border: 1px solid #ffcdd2;
+  border-radius: 16px;
+  padding: 2rem;
+  color: #c62828;
+}
+
+@media (max-width: 768px) {
+  .profile {
+    padding: 1.5rem 1rem 2.5rem;
+  }
+
+  .profile > header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-form .actions {
+    justify-content: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  table {
+    font-size: 0.9rem;
+  }
+}

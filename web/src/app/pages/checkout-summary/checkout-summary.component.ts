@@ -10,7 +10,10 @@ interface CheckoutForm {
   fullName: string;
   phone: string;
   address: string;
-  city: string;
+  departmentId: number;
+  departmentName: string;
+  cityId: number;
+  cityName: string;
   notes: string;
 }
 
@@ -73,9 +76,17 @@ export class CheckoutSummaryComponent {
   async confirmOrder(): Promise<void> {
     if (!this.form || this.items.length === 0) return;
     if (this.submitting()) return;
+    if (!this.form.departmentId || !this.form.cityId) return;
     this.submitting.set(true);
     try {
-      await this.orderService.createFromCart(this.form, this.items);
+      await this.orderService.createFromCart(
+        {
+          ...this.form,
+          departmentId: this.form.departmentId,
+          cityId: this.form.cityId,
+        },
+        this.items,
+      );
       this.cartService.clear();
       this.submitted.set(true);
     } catch (err) {
@@ -94,5 +105,3 @@ export class CheckoutSummaryComponent {
     this.router.navigate(['/catalogo']);
   }
 }
-
-

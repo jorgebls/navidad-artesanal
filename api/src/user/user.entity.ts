@@ -6,11 +6,24 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column() name: string;
+  @Column({ length: 100 })
+  firstName: string;
 
-  @Column() email: string;
+  @Column({ length: 100 })
+  lastName: string;
 
-  @Column() password: string;
+  @Column({ unique: true })
+  email: string;
 
-  @CreateDateColumn() createdAt: Date;
+  @Column({ length: 40 })
+  phone: string;
+
+  @Column({ length: 40 })
+  documentId: string;
+
+  @Column({ select: false })
+  passwordHash: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

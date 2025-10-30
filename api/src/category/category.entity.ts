@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from '../product/product.entity';
+import { Size } from '../size/size.entity';
 
 @Entity()
 export class Category {
@@ -17,6 +18,9 @@ export class Category {
 
   @OneToMany(() => Product, (product) => product.category, { cascade: false })
   products: Product[];
+
+  @OneToMany(() => Size, (size) => size.category, { cascade: ['remove'] })
+  sizes: Size[];
 
   @CreateDateColumn()
   createdAt: Date;

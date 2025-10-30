@@ -61,6 +61,7 @@ export class ProductService {
     const qb = this.repo
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('category.sizes', 'category_sizes')
       .leftJoinAndSelect('product.designs', 'design')
       .leftJoinAndSelect('product.fabrics', 'fabric')
       .skip((page - 1) * limit)
@@ -135,7 +136,7 @@ export class ProductService {
   async findOne(id: string) {
     const p = await this.repo.findOne({
       where: { id },
-      relations: { category: true, designs: true, fabrics: true },
+      relations: { category: { sizes: true }, designs: true, fabrics: true },
     });
     if (!p) throw new NotFoundException('Producto no encontrado');
     return this.mapProduct(p);
@@ -201,6 +202,13 @@ export class ProductService {
         }
       : null;
 
+    const categorySizes = (category?.sizes ?? []) as Array<{
+      id: number;
+      code: string;
+      name: string;
+      description?: string | null;
+    }>;
+
     const mappedDesigns = (designs as any[]).map((design) => {
       const { products: _omit, extraCost, colorHex, ...designRest } = design;
       return {
@@ -219,18 +227,39 @@ export class ProductService {
       };
     });
 
-    return {
-      ...restProduct,
-      category: mappedCategory,
-      categoryId: restProduct.categoryId ?? mappedCategory?.id ?? null,
-      designs: mappedDesigns,
-      fabrics: mappedFabrics,
-      sizes: (restProduct.sizes ?? []).map((variant: any) => ({
-        size: String(variant.size ?? '').toUpperCase(),
+    const sizesMap = new Map<number, { code: string; name: string; description?: string | null }>(
+      categorySizes.map((size) => [size.id, { code: size.code, name: size.name, description: size.description }]),
+    );
+
+    const mappedSizes = (restProduct.sizes ?? []).map((variant: any) => {
+      const meta = sizesMap.get(Number(variant.sizeId));
+      return {
+        sizeId: Number(variant.sizeId),
         price: Number(variant.price ?? 0),
         description: variant.description ?? '',
         image: variant.image ?? null,
-      })),
+        sizeCode: meta?.code ?? null,
+        sizeName: meta?.name ?? null,
+      };
+    });
+
+    return {
+      ...restProduct,
+      category: mappedCategory
+        ? {
+            ...mappedCategory,
+            sizes: categorySizes.map((size) => ({
+              id: size.id,
+              code: size.code,
+              name: size.name,
+              description: size.description ?? null,
+            })),
+          }
+        : null,
+      categoryId: restProduct.categoryId ?? mappedCategory?.id ?? null,
+      designs: mappedDesigns,
+      fabrics: mappedFabrics,
+      sizes: mappedSizes,
       customizationOptions: restProduct.customizationOptions ?? [],
       coverUrl,
     };
