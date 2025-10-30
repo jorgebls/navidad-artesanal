@@ -27,17 +27,13 @@ export class ProductService {
     this.bucket = this.cfg.get<string>('SUPABASE_BUCKET') || 'products';
   }
 
-  private async signPath(path?: string | null): Promise<string | null> {
-    if (!path) return null;
+  private async signCover(p: Product): Promise<string | null> {
+    if (!p.coverPath) return null;
     const { data, error } = await this.supa
       .storage
       .from(this.bucket)
-      .createSignedUrl(path, 60 * 60); // 1 hora
+      .createSignedUrl(p.coverPath, 60 * 60); // 1 hora
     return error ? null : data.signedUrl;
-  }
-
-  private async signCover(p: Product): Promise<string | null> {
-    return this.signPath(p.coverPath);
   }
 
   async findAll(query: QueryProductDto) {
@@ -140,7 +136,7 @@ export class ProductService {
   async findOne(id: string) {
     const p = await this.repo.findOne({
       where: { id },
-      relations: { category: { sizes: true }, designs: true, fabrics: true, photos: true },
+      relations: { category: { sizes: true }, designs: true, fabrics: true },
     });
     if (!p) throw new NotFoundException('Producto no encontrado');
     return this.mapProduct(p);
@@ -191,7 +187,7 @@ export class ProductService {
 
   private async mapProduct(p: Product) {
     const coverUrl = await this.signCover(p);
-    const { coverPath, designs = [], fabrics = [], photos = [], ...rest } = p as any;
+    const { coverPath, designs = [], fabrics = [], ...rest } = p as any;
     const { category, ...restProduct } = rest;
 
     const sanitizeColor = (hex?: string | null) =>
@@ -247,36 +243,6 @@ export class ProductService {
       };
     });
 
-    const mappedPhotos = await Promise.all(
-      (photos as any[]).map(async (photo) => {
-        const url = photo.path === coverPath ? coverUrl : await this.signPath(photo.path);
-        let createdAt: string | null = null;
-        if (photo.createdAt instanceof Date) {
-          createdAt = photo.createdAt.toISOString();
-        } else if (photo.createdAt) {
-          const parsed = new Date(photo.createdAt);
-          createdAt = Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
-        }
-        return {
-          id: photo.id,
-          path: photo.path,
-          url,
-          mime: photo.mime,
-          size: photo.size,
-          createdAt,
-          isCover: photo.path === coverPath,
-        };
-      }),
-    );
-
-    const sortedPhotos = mappedPhotos.sort((a, b) => {
-      if (a.isCover && !b.isCover) return -1;
-      if (!a.isCover && b.isCover) return 1;
-      const aDate = a.createdAt ? Date.parse(a.createdAt) : 0;
-      const bDate = b.createdAt ? Date.parse(b.createdAt) : 0;
-      return bDate - aDate;
-    });
-
     return {
       ...restProduct,
       category: mappedCategory
@@ -296,7 +262,6 @@ export class ProductService {
       sizes: mappedSizes,
       customizationOptions: restProduct.customizationOptions ?? [],
       coverUrl,
-      photos: sortedPhotos,
     };
   }
 }

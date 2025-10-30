@@ -54,16 +54,6 @@ export interface ProductFabric {
   extraCost: number;
 }
 
-export interface ProductPhoto {
-  id: string;
-  path: string;
-  url: string | null;
-  mime: string;
-  size: number;
-  createdAt?: string | null;
-  isCover?: boolean;
-}
-
 export interface Product {
   id: string;
   name: string;
@@ -81,7 +71,6 @@ export interface Product {
   customizationOptions?: CustomizationCategory[];
   designs?: ProductDesign[];
   fabrics?: ProductFabric[];
-  photos?: ProductPhoto[];
 }
 
 export interface CustomizedProduct {

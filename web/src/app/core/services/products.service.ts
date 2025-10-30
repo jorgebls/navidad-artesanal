@@ -80,26 +80,7 @@ export class ProductsService {
 
   private normalizeProduct(raw: RawProduct): Product {
     const basePrice = raw['basePrice'] !== undefined ? Number(raw['basePrice']) : raw['price'] ?? 0;
-    const photosRaw: any[] = Array.isArray(raw['photos']) ? raw['photos'] : [];
-    const photos = photosRaw.map((photo: any) => {
-      const rawCreatedAt = photo.createdAt;
-      let createdAt: string | null = null;
-      if (rawCreatedAt) {
-        const parsed = new Date(rawCreatedAt);
-        createdAt = Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
-      }
-      return {
-        id: String(photo.id),
-        path: photo.path ?? '',
-        url: photo.url ?? null,
-        mime: photo.mime ?? '',
-        size: Number(photo.size ?? 0),
-        createdAt,
-        isCover: Boolean(photo.isCover),
-      };
-    });
-    const coverFromPhotos = photos.find((p) => p.isCover)?.url ?? null;
-    const coverUrl = raw['coverUrl'] ?? coverFromPhotos ?? raw['image'] ?? null;
+    const coverUrl = raw['coverUrl'] ?? raw['image'] ?? null;
     const categoryRaw = raw['category'];
     const categoryId =
       raw['categoryId'] ??
@@ -153,7 +134,7 @@ export class ProductsService {
       description: raw['description'] ?? '',
       price: basePrice,
       basePrice,
-      image: coverUrl ?? photos[0]?.url ?? raw['image'] ?? '',
+      image: coverUrl ?? raw['image'] ?? '',
       coverUrl,
       stock: raw['stock'] ?? 0,
       customizable: Boolean(raw['customizable']),
@@ -175,7 +156,6 @@ export class ProductsService {
       createdAt: raw['createdAt'] ?? null,
       designs,
       fabrics,
-      photos,
     };
   }
 }

@@ -2,29 +2,7 @@
     <a routerLink="/catalogo" class="back">← Volver al catálogo</a>
   
     <div class="card">
-      <div class="gallery">
-        <div class="main-image">
-          <img
-            [src]="currentImage || fallbackImage"
-            [alt]="product.name"
-            class="main-photo"
-          />
-        </div>
-        <div class="thumbnails" *ngIf="photos.length > 0">
-          <button
-            type="button"
-            class="thumb"
-            *ngFor="let photo of photos; let i = index"
-            [class.active]="i === activePhotoIndex"
-            (click)="selectPhoto(i)"
-          >
-            <img
-              [src]="photo.url || fallbackImage"
-              [alt]="product.name + ' foto ' + (i + 1)"
-            />
-          </button>
-        </div>
-      </div>
+      <img [src]="currentImage" [alt]="product.name" />
       <div class="info">
         <h2>{{ product.name }}</h2>
         <p class="price">{{ formatPrice(currentPrice) }}</p>

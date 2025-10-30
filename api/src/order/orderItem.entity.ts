@@ -15,7 +15,7 @@ export class OrderItem {
   @Column({ type: 'varchar' })
   productName: string;
 
-  @Column({ type: 'varchar', length: 5 })
+  @Column({ type: 'varchar', length: 10, default: 'UNIQUE' })
   size: string;
 
   @Column({ type: 'int' })
@@ -27,5 +27,4 @@ export class OrderItem {
   @Column({ type: 'json', nullable: true })
   customizations?: Record<string, string> | null;
 }
-
 
