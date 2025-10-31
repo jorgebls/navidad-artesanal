@@ -1,65 +1,81 @@
-# Documentación del proyecto (navidad artesanal)
+# Documentación funcional – Navidad Artesanal
 
-## 1. Objetivo y funcionamiento general
-**Objetivo.** Navidad Artesanal es una tienda en línea que exhibe un catálogo de productos navideños hechos a mano, permite autenticarse (registro/login demo), gestionar un carrito local y simula el flujo de checkout invitando al usuario a iniciar sesión.
+## 1. Objetivo general
+Navidad Artesanal es una plataforma web que permite descubrir, personalizar y comprar productos navideños hechos a mano. Incluye un backend en NestJS que expone la API REST y un frontend en Angular que ofrece la experiencia visual para clientes finales.
 
-**Flujos implementados actualmente**
-- **Navegación pública:** La cabecera (`HeaderComponent`) muestra enlaces contextuales a catálogo, personalización y carrito, con badges de cantidad y estado de sesión; el home presenta la propuesta de valor, CTA al catálogo, bloques de categorías y destacados, además de un formulario de suscripción que valida el formato del correo, despliega mensajes temporales y limpia el campo automáticamente.
-- **Catálogo y descubrimiento:** `CatalogComponent` asegura que el seed del catálogo se ejecute antes de renderizar, obtiene los productos normalizados desde `ProductsService`, maneja errores de imagen y expone precios por talla predeterminada; cada tarjeta navega al detalle del producto, permitiendo un flujo de exploración completo desde `/catalogo`.
-- **Detalle de producto y selección:** `ProductDetailComponent` recupera el identificador desde la ruta, carga el producto y determina la talla inicial observando el carrito existente; el usuario puede alternar tallas, ver cómo cambian precio, descripción e imagen, ajustar la cantidad y añadir al carrito, tras lo cual el componente confirma que el ítem quedó almacenado y ofrece ir directamente al carrito.
-- **Gestión de carrito y pre-checkout:** `CartComponent` se suscribe a la signal reactiva de `CartService`, renderiza el listado con controles por ítem (cambiar cantidad, eliminar) y actualiza los totales de manera inmediata; también permite vaciar el carrito completo y, al iniciar el checkout, abre un modal que resume el requisito de autenticación y dirige a login o registro, manteniendo la intención de compra.
-- **Autenticación demo y perfil:** Los formularios de registro e inicio de sesión están construidos con `ReactiveFormsModule`, incluyen validaciones por campo, mensajes de error contextuales y, al enviar, interactúan con `AuthService` para persistir usuarios y sesiones en `localStorage`; el perfil muestra los datos capturados, expone la opción de cerrar sesión y sincroniza la cabecera para reflejar el estado actual.
-- **Persistencia y estado compartido:** `StorageService` centraliza el acceso a `localStorage`, permitiendo que `ProductsService`, `CartService` y `AuthService` compartan datos; el estado del carrito utiliza *signals* para publicar cambios en tiempo real hacia cabecera, detalle y carrito, asegurando una experiencia consistente entre páginas.
+## 2. Flujos funcionales principales
+- **Autenticación y sesión:** registro e inicio de sesión con validaciones completas, emisión de token JWT válido por 1 hora y reconstrucción de sesión con `/api/auth/me`. En el frontend un servicio de timeout cierra la sesión tras 15 min sin actividad.
+- **Catálogo y descubrimiento:** navegación pública por categorías, filtros básicos y búsqueda; los listados usan precios por variante (talla) y muestran imágenes firmadas desde Supabase.
+- **Detalle y personalización:** para productos personalizables se seleccionan talla, diseño y tela, calculando el precio final; la vista maneja faltantes y contenidos alternativos.
+- **Carrito y checkout:** el carrito usa signals para reaccionar en tiempo real. El checkout requiere autenticación, solicita datos de envío y crea la orden en el backend.
+- **Gestión de pedidos:** el backend valida ciudad/departamento, crea los ítems, asigna estado inicial y permite cancelar mientras el pedido está “En proceso”; el frontend muestra el resumen tras la compra.
+- **Perfil y actualización de datos:** el usuario autenticado puede consultar y editar sus datos personales. Las restricciones impiden duplicar correos y protegen la contraseña.
 
-**Flujos pendientes para la entrega final**
-- **Checkout real:** Implementar proceso de pago/confirmación posterior al modal actual, incluyendo validación de dirección, resumen de pedido y generación de órdenes.
-- **Personalización de productos:** Completar la experiencia de `/personalizar` (actualmente página informativa) con configuradores de materiales/colores y lógica correspondiente.
-- **Sincronización con backend:** Sustituir almacenamiento en `localStorage` por API real para usuarios, catálogo y carrito, incluyendo `CartService.syncWithUser`.
-- **Seguridad de credenciales:** Reemplazar el hash Base64 por un mecanismo seguro y manejo de sesiones/token.
-- **Gestión avanzada de inventario y promociones:** Integrar reglas de stock, precios dinámicos o contenidos adicionales según se defina en el alcance final.
+## 3. Arquitectura de la solución
 
-## 2. Arquitectura funcional resumida
+### 3.1 Backend (carpeta `api/`)
+- **Framework:** NestJS con TypeScript.
+- **Bootstrapping (`src/main.ts`):** define prefijo global `/api`, habilita `ValidationPipe` con `whitelist`, `forbidNonWhitelisted` y conversión de tipos, y levanta el servidor en el puerto 3000.
+- **Módulo raíz (`src/app.module.ts`):** carga `ConfigModule`, configura `TypeOrmModule.forRootAsync` para PostgreSQL (SSL permisivo, `autoLoadEntities`, `synchronize` para desarrollo) y registra los módulos funcionales.
+- **Módulos destacados:**
+  - `auth`: manejo de registro, login, refresco de perfil, generación/validación de tokens JWT (`JwtModule`, `JwtStrategy`, `JwtAuthGuard`).
+  - `user`: CRUD básico de usuarios con sanitización de datos y hash de contraseña (`bcrypt`).
+  - `product`, `category`, `design`, `fabric`, `size`: definen catálogo, relaciones Many-to-Many y variantes (tallas, diseños, telas).
+  - `photo`: guarda metadatos de imágenes y firma URLs mediante Supabase Storage.
+  - `order`: crea y lista pedidos, valida consistencia de ubicación, controla estados y cancelaciones.
+  - `location`: expone catálogos de departamentos y ciudades.
+- **Seguridad:** rutas críticas usan `@UseGuards(JwtAuthGuard)`, que verifica el token y adjunta `{ userId, email }` en `req.user`. Se emplean excepciones HTTP estándar (`UnauthorizedException`, `ConflictException`, etc.).
+- **Integraciones:** Supabase Storage para imágenes, PostgreSQL como base de datos, `bcrypt` para hashes.
 
-### 2.1 Servicios y almacenamiento
-- `StorageService`: wrapper de `localStorage` para serializar/leer JSON.
-- `ProductsService`: siembra catálogo desde `assets/data/products.json`, normaliza variantes y entrega datos a las vistas.
-- `CartService`: usa *signals* para manejar ítems, total, conteo y persistencia en `NA_CART`.
-- `AuthService`: gestiona usuarios de demostración (`NA_USERS`), registro, login, logout y expone el usuario actual.
+### 3.2 Frontend (carpeta `web/`)
+- **Framework:** Angular standalone con TypeScript, router y signals.
+- **Estructura:** `app/` se divide en `core` (servicios), `shared` (componentes y modelos reutilizables) y `pages` (rutas lazy). `app.routes.ts` define las pantallas y protege `checkout` y `perfil` con `authGuard`.
+- **Gestión de estado:** `AuthService`, `CartService` y otros servicios usan signals para exponer estado reactivo. `StorageService` sincroniza con `localStorage`.
+- **Servicios clave:**
+  - `AuthService`: login/registro contra `/api/auth`, persistencia de token, refresco de perfil y actualización de datos.
+  - `ProductsService`, `CategoryService`, `CustomizationService`: consumen la API para catálogo y personalización.
+  - `OrderService`: envía pedidos al backend y gestiona la respuesta.
+  - `SessionTimeoutService`: registra actividad de usuario y cierra sesión tras 15 min sin interacción, redirigiendo al login.
+- **Interfaz:** componentes compartidos (`Header`, `Footer`, `SnowEffect`) envuelven a las páginas; formularios reactivos en autenticación y checkout validan datos antes de llamar a la API.
 
-### 2.2 Componentes compartidos
-- `AppComponent`: inyecta `ProductsService.seedIfEmpty()`, renderiza cabecera, contenido y pie.
-- `HeaderComponent`: navegación principal, badge de carrito y control de sesión.
-- `FooterComponent`: información institucional.
-- `SnowEffectComponent`: efecto visual de nieve controlado por DOM.
+### 3.3 Comunicación front ↔ back
+- La API expone rutas bajo `/api/...`; el front se comunica vía `HttpClient` con un proxy local (`proxy.conf.json`) durante desarrollo.
+- Las rutas protegidas requieren header `Authorization: Bearer <token>`. El guard de Angular (`authGuard`) bloquea la navegación en el cliente y el guard de Nest valida el token en el servidor.
+- Supabase entrega URLs firmadas con vigencia de 1 hora, que el frontend usa para renderizar imágenes.
 
-### 2.3 Páginas clave
-- `HomeComponent`: hero, categorías, productos destacados y suscripción.
-- `CatalogComponent`: grilla de productos con precio por talla `M` y fallback de imagen.
-- `ProductDetailComponent`: selector de talla/cantidad e integración con carrito.
-- `CartComponent`: CRUD de ítems, cálculo de totales y modal de checkout simulado.
-- `RegisterComponent` / `LoginComponent`: formularios con validaciones reactivas, conexión a `AuthService` y redirecciones.
-- `ProfileComponent`: muestra datos persistidos y permite logout.
-- `CustomizeComponent`: placeholder para futura experiencia de personalización.
+## 4. Modelo de datos principal
+- **User:** datos personales, correo único, teléfono, documento y `passwordHash` (UUID como PK, `CreateDateColumn`).
+- **Product:** información base, precio, stock, indicador `customizable`, relaciones con fotos, categoría, diseños, telas y variantes de talla (JSONB).
+- **Category:** nombre, slug y relación con tallas (`size`).
+- **Design / Fabric:** catálogos con costo extra opcional, color, imagen y vínculo Many-to-Many con productos.
+- **Photo:** metadatos de archivo ligado al producto.
+- **Order / OrderItem / OrderStatus:** pedidos con total, método de pago, relación a usuario y colección de items; los estados se precargan (“En proceso”, “Completado”, “Cancelado”).
+- **Department / City:** tablas maestras para validar ubicación en el checkout.
 
-## 3. Instrucciones para ejecutar el proyecto
-Para ejecutar la aplicación (instalación de dependencias, scripts de desarrollo y build) consulta las instrucciones del archivo `README.md` ubicado en la carpeta `web/`.
+## 5. Integraciones y configuración
+- **PostgreSQL:** conexión parametrizada mediante variables `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`.
+- **Supabase Storage:** requiere `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE` y `SUPABASE_BUCKET`; se usa para almacenar y firmar imágenes de productos.
+- **JWT:** `JWT_SECRET` define la clave de firma y la caducidad se fija en 1 hora desde `AuthModule`.
+- Los valores se declaran en `api/.env`. El frontend usa `proxy.conf.json` para redirigir `/api` al backend en desarrollo.
 
-## 4. Aclaraciones y observaciones
-- El proyecto se apoya en `localStorage`; al limpiar el almacenamiento del navegador se pierden usuarios, carrito y catálogo sembrado.
-- Las credenciales se almacenan con hashing Base64 solo para demostración y deben endurecerse en el siguiente hito.
-- `ProductsService.seedIfEmpty()` depende de `assets/data/products.json`; cualquier cambio en el catálogo debe reflejarse en ese archivo.
-- `SnowEffectComponent` manipula el DOM directamente; si se amplía el efecto conviene revisar rendimiento y accesibilidad.
-- El modal de checkout no procesa pagos reales. Definir pronto los requisitos funcionales para integrarlo con el backend antes de la entrega final.
+## 6. Ejecución local
+1. **Backend**
+   1. `cd api`
+   2. `npm install`
+   3. Completar `api/.env` con las variables necesarias.
+   4. `npm run start:dev`
+2. **Frontend**
+   1. `cd web`
+   2. `npm install`
+   3. `npm run start` (utiliza el proxy para apuntar al backend en `http://localhost:3000`).
 
----
-#modelo datos
+## 7. Consideraciones y próximos pasos
+- Los tokens expiran a la hora y requieren reautenticación; evaluar refresh tokens para sesiones más largas.
+- El timeout de 15 min de inactividad se gestiona en el frontend; no existe invalidación de sesión en el backend.
+- Faltan integrar pagos reales y reforzar manejo de stock simultáneo.
+- Migrar `synchronize: true` a migraciones controladas antes del despliegue productivo.
+- Añadir pruebas automatizadas para módulos críticos (auth, pedidos, catálogo).
 
-
-
-
-
----
-#link del video mostrando la aplicacion 
-
-https://youtu.be/r9gEPz6a5xQ
+## 8. Recursos y evidencias
+- **Video demostrativo:** https://youtu.be/r9gEPz6a5xQ
 
