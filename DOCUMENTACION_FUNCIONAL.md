@@ -3,6 +3,23 @@
 ## 1. Objetivo general
 Navidad Artesanal es una plataforma web que permite descubrir, personalizar y comprar productos navideños hechos a mano. Incluye un backend en NestJS que expone la API REST y un frontend en Angular que ofrece la experiencia visual para clientes finales.
 
+🛠️ **Funcionalidades actuales**
+
+* **Home** con hero y accesos directos al catálogo y personalización.
+* **Catálogo** consumiendo la API Nest (filtros por categoría, ordenamiento básico).
+* **Detalle de producto** con portada, tallas y controles de cantidad.
+* **Carrito**:
+  * Añadir desde catálogo o detalle.
+  * Ajustar cantidades, eliminar ítems y vaciar carrito.
+  * Totales en tiempo real + persistencia en `localStorage`.
+* **Autenticación con JWT**: registro, login, refresco de perfil y logout.
+* **Perfil de usuario** editable (datos básicos) y listado de pedidos con cancelación.
+* **Checkout** con formulario validado, consumo de `/location` (departamentos/ciudades) y creación de pedidos.
+* **Personalización** de productos personalizables (diseños, telas, tamaños).
+* **Protección de rutas** (`authGuard`) y manejo de sesión mediante interceptor (envío del token).
+* **Rutas principales**: `/`, `/catalogo`, `/producto/:id`, `/carrito`, `/checkout`, `/checkout/resumen`, `/login`, `/registro`, `/perfil`, `/personalizar/:slug`.
+
+
 ## 2. Flujos funcionales principales
 - **Autenticación y sesión:** registro e inicio de sesión con validaciones completas, emisión de token JWT válido por 1 hora y reconstrucción de sesión con `/api/auth/me`. En el frontend un servicio de timeout cierra la sesión tras 15 min sin actividad.
 - **Catálogo y descubrimiento:** navegación pública por categorías, filtros básicos y búsqueda; los listados usan precios por variante (talla) y muestran imágenes firmadas desde Supabase.
@@ -10,6 +27,8 @@ Navidad Artesanal es una plataforma web que permite descubrir, personalizar y co
 - **Carrito y checkout:** el carrito usa signals para reaccionar en tiempo real. El checkout requiere autenticación, solicita datos de envío y crea la orden en el backend.
 - **Gestión de pedidos:** el backend valida ciudad/departamento, crea los ítems, asigna estado inicial y permite cancelar mientras el pedido está “En proceso”; el frontend muestra el resumen tras la compra.
 - **Perfil y actualización de datos:** el usuario autenticado puede consultar y editar sus datos personales. Las restricciones impiden duplicar correos y protegen la contraseña.
+
+
 
 ## 3. Arquitectura de la solución
 
@@ -75,7 +94,4 @@ Navidad Artesanal es una plataforma web que permite descubrir, personalizar y co
 - Faltan integrar pagos reales y reforzar manejo de stock simultáneo.
 - Migrar `synchronize: true` a migraciones controladas antes del despliegue productivo.
 - Añadir pruebas automatizadas para módulos críticos (auth, pedidos, catálogo).
-
-## 8. Recursos y evidencias
-- **Video demostrativo:** https://youtu.be/r9gEPz6a5xQ
 
